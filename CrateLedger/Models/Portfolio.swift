@@ -14,6 +14,14 @@ class Portfolio {
     
     @Relationship(deleteRule: .cascade) var assets: [Asset]? = [Asset]()
     
+    var value: Double {
+        var totalValue: Double = 0
+        for asset in assets ?? [] {
+            totalValue += asset.value
+        }
+        return totalValue
+    }
+    
     init(name: String, assets: [Asset]? = nil) {
         self.name = name
         self.assets = assets

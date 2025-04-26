@@ -6,13 +6,24 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct PortfolioView: View {
+    @Bindable var portfolio: Portfolio
+    
     var body: some View {
-        Text("Hello, World! 123")
+        Text("Portfolio View")
     }
 }
 
 #Preview {
-    PortfolioView()
+    do {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: Portfolio.self, configurations: config)
+        let portfolio = Portfolio(name: "Test Portfolio")
+        return PortfolioView(portfolio: portfolio)
+            .modelContainer(container)
+    } catch {
+        return Text("Failed to create container: \(error.localizedDescription)")
+    }
 }

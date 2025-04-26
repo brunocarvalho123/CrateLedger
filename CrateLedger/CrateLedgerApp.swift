@@ -12,7 +12,7 @@ import SwiftData
 struct CrateLedgerApp: App {
     var body: some Scene {
         WindowGroup {
-            PortfolioView()
+            ContentView()
         }
         .modelContainer(for: Portfolio.self)
     }
