@@ -14,13 +14,19 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack {
-            if portfolios.isEmpty {
-                Button("Add Portfolio") {
-                    let newPortfolio = Portfolio(name: "First Portfolio")
-                    modelContext.insert(newPortfolio)
+            ScrollView {
+                if portfolios.isEmpty {
+                    Button("Add Portfolio") {
+                        let newPortfolio = Portfolio(name: "First Portfolio")
+                        modelContext.insert(newPortfolio)
+                    }
+                } else {
+                    PortfolioView(portfolio: portfolios[0])
                 }
-            } else {
-                PortfolioView(portfolio: portfolios[0])
+            }
+            .navigationTitle("Crate Ledger")
+            .navigationDestination(for: Asset.self) { asset in
+                AssetDetailView(asset: asset)
             }
         }
     }

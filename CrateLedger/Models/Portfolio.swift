@@ -12,17 +12,13 @@ import SwiftData
 class Portfolio {
     var name: String = "undefined"
     
-    @Relationship(deleteRule: .cascade) var assets: [Asset]? = [Asset]()
+    @Relationship(deleteRule: .cascade) var assets: [Asset] = [Asset]()
     
     var value: Double {
-        var totalValue: Double = 0
-        for asset in assets ?? [] {
-            totalValue += asset.value
-        }
-        return totalValue
+        assets.reduce(0) { $0 + $1.value }
     }
     
-    init(name: String, assets: [Asset]? = nil) {
+    init(name: String, assets: [Asset] = []) {
         self.name = name
         self.assets = assets
     }
