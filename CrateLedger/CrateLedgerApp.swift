@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct CrateLedgerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            PortfolioView()
         }
+        .modelContainer(for: Portfolio.self)
     }
 }
