@@ -12,9 +12,10 @@ struct ContentView: View {
     @Environment(\.modelContext) var modelContext
     @Query(sort: \Portfolio.name) var portfolios: [Portfolio]
     
+    
     var body: some View {
         NavigationStack {
-            ScrollView {
+            VStack {
                 if portfolios.isEmpty {
                     Button("Add Portfolio") {
                         let newPortfolio = Portfolio(name: "First Portfolio")
@@ -25,10 +26,12 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("Crate Ledger")
-            .navigationDestination(for: Asset.self) { asset in
-                AssetDetailView(asset: asset)
-            }
         }
+    }
+
+    
+    func deleteData() {
+        try? modelContext.delete(model: Portfolio.self)
     }
 }
 

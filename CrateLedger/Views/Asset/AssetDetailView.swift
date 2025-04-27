@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct AssetDetailView: View {
-    @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
 
+    @Bindable var portfolio: Portfolio
     @Bindable var asset: Asset
-    var action: String = "edit"
+    var isNew: Bool = true
 
     var body: some View {
         Form {
@@ -28,9 +28,17 @@ struct AssetDetailView: View {
             }
             
             Section {
-                Button("Save") {
-                    modelContext.insert(asset)
-                    dismiss()
+                if (isNew) {
+                    Button("Save") {
+                        if asset.symbol.isEmpty == false && asset.name.isEmpty == false && asset.type.isEmpty == false {
+                            portfolio.assets.append(asset)
+                        }
+                        dismiss()
+                    }
+                } else {
+                    Button("Done") {
+                        dismiss()
+                    }
                 }
             }
         }

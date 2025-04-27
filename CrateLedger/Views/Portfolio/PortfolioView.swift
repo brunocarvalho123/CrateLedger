@@ -15,38 +15,42 @@ struct PortfolioView: View {
     @State private var showingAddScreen = false
 
     var body: some View {
-        List {
-            ForEach(portfolio.assets) { asset in
-                NavigationLink(value: asset) {
-                    HStack {
-                        Text(asset.symbol)
-                            .font(.largeTitle)
-                        VStack(alignment: .leading) {
-                            Text(asset.name)
-                                .font(.headline)
-                            Text(asset.type)
-                                .foregroundStyle(.secondary)
+        NavigationStack {
+            List {
+                ForEach(portfolio.assets) { asset in
+                    NavigationLink(value: asset) {
+                        HStack {
+                            Text(asset.symbol)
+                                .font(.largeTitle)
+                            VStack(alignment: .leading) {
+                                Text(asset.name)
+                                    .font(.headline)
+                                Text(asset.type)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
                 }
+                .onDelete(perform: deleteAsset)
             }
-            .onDelete(perform: deleteAsset)
-        }
-        .navigationTitle($portfolio.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                EditButton()
+            .navigationTitle($portfolio.name)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: Asset.self) { asset in
+                AssetDetailView(portfolio: portfolio, asset: asset, isNew: false)
             }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Add asset", systemImage: "plus") {
-                    showingAddScreen.toggle()
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    EditButton()
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Add asset", systemImage: "plus") {
+                        showingAddScreen = true
+                    }
                 }
             }
-        }
-        .sheet(isPresented: $showingAddScreen) {
-            let newAsset = Asset(name: "", type: "", price: 0, symbol: "", units: 0)
-            AssetDetailView(asset: newAsset, action: "create")
+            .sheet(isPresented: $showingAddScreen) {
+                AssetDetailView(portfolio: portfolio, asset: Asset(name: "", type: "", price: 0, symbol: "", units: 0), isNew: true)
+            }
         }
     }
     
