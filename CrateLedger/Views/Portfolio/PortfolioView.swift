@@ -25,7 +25,7 @@ struct PortfolioView: View {
                             VStack(alignment: .leading) {
                                 Text(asset.name)
                                     .font(.headline)
-                                Text(asset.type)
+                                Text(asset.value, format: .currency(code: "USD"))
                                     .foregroundStyle(.secondary)
                             }
                         }
