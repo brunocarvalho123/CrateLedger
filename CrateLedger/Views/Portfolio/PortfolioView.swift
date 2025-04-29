@@ -13,6 +13,7 @@ struct PortfolioView: View {
     @Bindable var portfolio: Portfolio
     
     @State private var showingAddScreen = false
+    @State private var isLoading = false
 
     var body: some View {
         NavigationStack {
@@ -38,6 +39,11 @@ struct PortfolioView: View {
             .navigationDestination(for: Asset.self) { asset in
                 AssetDetailView(portfolio: portfolio, asset: asset, isNew: false)
             }
+            .onAppear {
+                Task {
+                    await updateRemoteAssets()
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     EditButton()
@@ -51,6 +57,11 @@ struct PortfolioView: View {
             .sheet(isPresented: $showingAddScreen) {
                 AssetDetailView(portfolio: portfolio, asset: Asset(name: "", type: "", price: 0, symbol: "", units: 0), isNew: true)
             }
+            .overlay {
+                if isLoading {
+                    ProgressView()
+                }
+            }
         }
     }
     
@@ -58,6 +69,23 @@ struct PortfolioView: View {
         for offset in offsets {
             let asset = portfolio.assets[offset]
             modelContext.delete(asset)
+        }
+    }
+    
+    func updateRemoteAssets() async {
+        let remoteAssets = portfolio.staleAssets
+        if remoteAssets.count == 0 {
+            return
+        }
+
+        isLoading = true
+        defer { isLoading = false }
+        
+        let assetsDTO = await AssetFetcherService.shared.fetchAssets(symbols: remoteAssets.map(\.symbol))
+        for assetDTO in assetsDTO {
+            if assetDTO.symbol != "ERR" {
+                remoteAssets.filter({ $0.symbol == assetDTO.symbol }).first?.updateFromRemote(remoteAsset: assetDTO)
+            }
         }
     }
 }

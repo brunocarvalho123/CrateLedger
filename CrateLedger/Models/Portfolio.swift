@@ -18,6 +18,11 @@ class Portfolio {
         assets.reduce(0) { $0 + $1.value }
     }
     
+    var staleAssets: [Asset] {
+        let staleInterval = Date().addingTimeInterval(-300) // 5 minutes
+        return self.assets.filter({ $0.remoteManaged && $0.updatedAt <= staleInterval })
+    }
+    
     init(name: String, assets: [Asset] = []) {
         self.name = name
         self.assets = assets
