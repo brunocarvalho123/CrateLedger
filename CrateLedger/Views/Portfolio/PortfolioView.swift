@@ -17,19 +17,11 @@ struct PortfolioView: View {
 
     var body: some View {
         NavigationStack {
+            Text("Value: \(portfolio.value, format: .currency(code: "USD"))")
             List {
                 ForEach(portfolio.assets) { asset in
                     NavigationLink(value: asset) {
-                        HStack {
-                            Text(asset.symbol)
-                                .font(.largeTitle)
-                            VStack(alignment: .leading) {
-                                Text(asset.name)
-                                    .font(.headline)
-                                Text(asset.value, format: .currency(code: "USD"))
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
+                        AssetRow(asset: asset)
                     }
                 }
                 .onDelete(perform: deleteAsset)
@@ -94,7 +86,7 @@ struct PortfolioView: View {
     do {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: Portfolio.self, configurations: config)
-        let portfolio = Portfolio(name: "Test Portfolio", assets: [Asset(name: "Test Asset", type: "crypto", price: 32.23, symbol: "TEST", units: 1.3)])
+        let portfolio = Portfolio(name: "Test Portfolio", assets: [Asset(name: "Test Asset", type: "crypto", price: 32.23, symbol: "TEST", units: 1.3, thumbURL: "https://assets.coingecko.com/coins/images/26375/standard/sui-ocean-square.png?1727791290")])
         return PortfolioView(portfolio: portfolio)
             .modelContainer(container)
     } catch {

@@ -33,6 +33,40 @@ class Asset {
         return formatter.string(from: self.updatedAt)
     }
     
+    var hasImage: Bool {
+        return self.thumbURL != "" || self.smallURL != "" || self.largeURL != ""
+    }
+    
+    var thumbImage: String {
+        if self.thumbURL != "" {
+            return self.thumbURL
+        } else if self.smallURL != "" {
+            return self.smallURL
+        } else {
+            return self.largeURL
+        }
+    }
+    
+    var smallImage: String {
+        if self.smallURL != "" {
+            return self.smallURL
+        } else if self.largeURL != "" {
+            return self.largeURL
+        } else {
+            return self.thumbURL
+        }
+    }
+    
+    var largeImage: String {
+        if self.largeURL != "" {
+            return self.largeURL
+        } else if self.smallURL != "" {
+            return self.smallURL
+        } else {
+            return self.thumbURL
+        }
+    }
+    
     init(name: String, type: String, price: Double, symbol: String, units: Double = 0.0, updatedAt: Date = .now, createdAt: Date = .now, thumbURL: String = "", smallURL: String = "", largeURL: String = "", notes: String = "") {
         self.name = name
         self.type = type

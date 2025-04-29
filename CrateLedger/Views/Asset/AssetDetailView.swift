@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AssetDetailView: View {
     @Environment(\.modelContext) var modelContext
@@ -22,48 +23,66 @@ struct AssetDetailView: View {
     @State private var errorMessage = ""
 
     var body: some View {
-        Form {
-            Section("Asset info") {
-                TextField("Name", text: $asset.name)
-                    .disabled(asset.remoteManaged)
-                TextField("Symbol", text: $asset.symbol)
-                    .disabled(asset.remoteManaged)
-                TextField("Type", text: $asset.type)
-                    .disabled(asset.remoteManaged)
-                TextField("Price", value: $asset.price, format: .currency(code: "USD"))
-                    .disabled(asset.remoteManaged)
-            }
-            Section("Amount") {
-                TextField("Amount held", value: $asset.units, format: .number)
-            }
-            Section("Notes") {
-                TextEditor(text: $asset.notes)
-            }
-            
-            Section(asset.remoteManaged ? "Updated at: \(asset.lastUpdate)" : "") {
-                Toggle("Remote managed", isOn: $asset.remoteManaged)
-                    .onChange(of: asset.remoteManaged) {
-                        if asset.remoteManaged {
-                            Task {
-                                await updateAssetFromRemote()
-                            }
-                        }
-                    }
-                Button("Fetch Asset") {
-                    Task {
-                        await updateAssetFromRemote()
+        VStack {
+            if asset.hasImage {
+                AsyncImage(url: URL(string: asset.largeImage)) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFit()
+                    } else if phase.error != nil {
+                        // Error
+                    } else {
+                        // Placeholder
+                        ProgressView()
                     }
                 }
-                if (isNew) {
-                    Button("Save") {
-                        if asset.symbol.isEmpty == false && asset.name.isEmpty == false && asset.type.isEmpty == false {
-                            portfolio.assets.append(asset)
+                .frame(height: 100)
+            }
+            Form {
+                Section("Asset info") {
+                    TextField("Name", text: $asset.name)
+                        .disabled(asset.remoteManaged)
+                    TextField("Symbol", text: $asset.symbol)
+                        .disabled(asset.remoteManaged)
+                    TextField("Type", text: $asset.type)
+                        .disabled(asset.remoteManaged)
+                    TextField("Price", value: $asset.price, format: .currency(code: "USD"))
+                        .disabled(asset.remoteManaged)
+                }
+                Section("Amount") {
+                    TextField("Amount held", value: $asset.units, format: .number)
+                }
+                Section("Notes") {
+                    TextEditor(text: $asset.notes)
+                }
+                
+                Section(asset.remoteManaged ? "Updated at: \(asset.lastUpdate)" : "") {
+                    Toggle("Remote managed", isOn: $asset.remoteManaged)
+                        .onChange(of: asset.remoteManaged) {
+                            if asset.remoteManaged {
+                                Task {
+                                    await updateRemoteAsset()
+                                }
+                            }
                         }
-                        dismiss()
+                        .disabled(asset.symbol.isEmpty)
+                    Button("Fetch Asset") {
+                        Task {
+                            await updateRemoteAsset()
+                        }
                     }
-                } else {
-                    Button("Done") {
-                        dismiss()
+                    if (isNew) {
+                        Button("Save") {
+                            if asset.symbol.isEmpty == false && asset.name.isEmpty == false && asset.type.isEmpty == false {
+                                portfolio.assets.append(asset)
+                            }
+                            dismiss()
+                        }
+                    } else {
+                        Button("Done") {
+                            dismiss()
+                        }
                     }
                 }
             }
@@ -80,7 +99,7 @@ struct AssetDetailView: View {
             Text(errorMessage)
         }
         .toolbar {
-            Button("Delete this book", systemImage: "trash") {
+            Button("Delete this asset", systemImage: "trash") {
                 showingDeleteAlert = true
             }
         }
@@ -96,7 +115,7 @@ struct AssetDetailView: View {
         dismiss()
     }
     
-    func updateAssetFromRemote() async {
+    func updateRemoteAsset() async {
         isLoading = true
         defer { isLoading = false }
         
@@ -115,5 +134,14 @@ struct AssetDetailView: View {
 }
 
 #Preview {
-    //AssetDetailView()
+    do {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: Asset.self, configurations: config)
+        let asset = Asset(name: "Test Asset", type: "crypto", price: 32.23, symbol: "TEST", units: 1.3)
+        let portfolio = Portfolio(name: "Test Portfolio", assets: [asset])
+        return AssetDetailView(portfolio: portfolio, asset: asset)
+            .modelContainer(container)
+    } catch {
+        return Text("Failed to create container: \(error.localizedDescription)")
+    }
 }
