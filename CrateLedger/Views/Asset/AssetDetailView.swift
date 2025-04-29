@@ -82,7 +82,7 @@ struct AssetDetailView: View {
         isLoading = true
         defer { isLoading = false }
         
-        let assetsDTO = await AssetFetcherService.shared.fetchAssets()
+        let assetsDTO = await AssetFetcherService.shared.fetchAssets(symbols: ["BTC","SUI"])
         print("Done")
     }
 }

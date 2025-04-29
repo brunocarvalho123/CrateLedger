@@ -14,8 +14,7 @@ class AssetFetcherService {
     
     private init() { }
     
-    // Example: Fetch all available assets
-    func fetchAssets() async -> [AssetDTO] {
+    func fetchAllAssets() async -> [AssetDTO] {
         let url = baseURL.appendingPathComponent("assets")
         
         do {
@@ -32,13 +31,38 @@ class AssetFetcherService {
         return [AssetDTO(name: "Error", type: "error", price: 0.0, symbol: "ERR")]
     }
     
-    // Example: Fetch a single asset by symbol
+    // Fetch multiple assets by symbols
+    func fetchAssets(symbols: [String]) async -> [AssetDTO] {
+        do {
+            var urlComponents = URLComponents(string: baseURL.appendingPathComponent("assets/query").absoluteString)!
+            urlComponents.queryItems = [
+                URLQueryItem(name: "symbol", value: symbols.joined(separator: ","))
+            ]
+            let url = urlComponents.url!
+
+            let (data, _) = try await URLSession.shared.data(from: url)
+            
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("Server JSON:\n\(jsonString)")
+            }
+            let decoder = JSONDecoder()
+            let items = try decoder.decode([AssetDTO].self, from: data)
+
+            return items
+        } catch {
+            // if we're still here it means the request failed somehow
+            print("Failed to fetch assets: \(error.localizedDescription)")
+        }
+        
+        return [AssetDTO(name: "Error", type: "error", price: 0.0, symbol: "ERR")]
+    }
+    
+    // Fetch a single asset by symbol
     func fetchAsset(symbol: String) async -> AssetDTO {
         let url = baseURL.appendingPathComponent("assets/\(symbol)")
         
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
-
             let decoder = JSONDecoder()
             let item = try decoder.decode(AssetDTO.self, from: data)
 
@@ -56,4 +80,7 @@ struct AssetDTO: Codable {
     let type: String
     let price: Double
     let symbol: String
+    var thumbURL: String?
+    var smallURL: String?
+    var largeURL: String?
 }
