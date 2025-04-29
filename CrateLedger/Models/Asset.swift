@@ -21,9 +21,16 @@ class Asset {
     var smallURL: String = ""
     var largeURL: String = ""
     var notes: String = ""
+    var remoteManaged = false
     
     var value: Double {
         return price * units
+    }
+    
+    var lastUpdate: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        return formatter.string(from: self.updatedAt)
     }
     
     init(name: String, type: String, price: Double, symbol: String, units: Double = 0.0, updatedAt: Date = .now, createdAt: Date = .now, thumbURL: String = "", smallURL: String = "", largeURL: String = "", notes: String = "") {
@@ -38,5 +45,25 @@ class Asset {
         self.smallURL = smallURL
         self.largeURL = largeURL
         self.notes = notes
+    }
+    
+    init(remoteAsset: AssetDTO) {
+        self.name = remoteAsset.name
+        self.type = remoteAsset.type
+        self.price = remoteAsset.price
+        self.symbol = remoteAsset.symbol
+        self.thumbURL = remoteAsset.thumbURL ?? ""
+        self.smallURL = remoteAsset.smallURL ?? ""
+        self.largeURL = remoteAsset.largeURL ?? ""
+    }
+    
+    func updateFromRemote(remoteAsset: AssetDTO) {
+        self.name = remoteAsset.name
+        self.type = remoteAsset.type
+        self.price = remoteAsset.price
+        self.updatedAt = Date.now
+        self.thumbURL = remoteAsset.thumbURL ?? ""
+        self.smallURL = remoteAsset.smallURL ?? ""
+        self.largeURL = remoteAsset.largeURL ?? ""
     }
 }

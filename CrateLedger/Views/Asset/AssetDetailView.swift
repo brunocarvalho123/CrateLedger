@@ -16,15 +16,22 @@ struct AssetDetailView: View {
     var isNew: Bool = true
     
     @State private var showingDeleteAlert = false
+    @State private var showingError = false
     @State private var isLoading = false
+    @State private var errorTitle = ""
+    @State private var errorMessage = ""
 
     var body: some View {
         Form {
             Section("Asset info") {
                 TextField("Name", text: $asset.name)
+                    .disabled(asset.remoteManaged)
                 TextField("Symbol", text: $asset.symbol)
+                    .disabled(asset.remoteManaged)
                 TextField("Type", text: $asset.type)
+                    .disabled(asset.remoteManaged)
                 TextField("Price", value: $asset.price, format: .currency(code: "USD"))
+                    .disabled(asset.remoteManaged)
             }
             Section("Amount") {
                 TextField("Amount held", value: $asset.units, format: .number)
@@ -33,10 +40,18 @@ struct AssetDetailView: View {
                 TextEditor(text: $asset.notes)
             }
             
-            Section {
-                Button("Fetch Assets") {
+            Section(asset.remoteManaged ? "Updated at: \(asset.lastUpdate)" : "") {
+                Toggle("Remote managed", isOn: $asset.remoteManaged)
+                    .onChange(of: asset.remoteManaged) {
+                        if asset.remoteManaged {
+                            Task {
+                                await updateAssetFromRemote()
+                            }
+                        }
+                    }
+                Button("Fetch Asset") {
                     Task {
-                        await fetchAssets()
+                        await updateAssetFromRemote()
                     }
                 }
                 if (isNew) {
@@ -61,6 +76,9 @@ struct AssetDetailView: View {
         } message: {
             Text("Are you sure?")
         }
+        .alert(errorTitle, isPresented: $showingError) { } message: {
+            Text(errorMessage)
+        }
         .toolbar {
             Button("Delete this book", systemImage: "trash") {
                 showingDeleteAlert = true
@@ -78,12 +96,21 @@ struct AssetDetailView: View {
         dismiss()
     }
     
-    func fetchAssets() async {
+    func updateAssetFromRemote() async {
         isLoading = true
         defer { isLoading = false }
         
-        let assetsDTO = await AssetFetcherService.shared.fetchAssets(symbols: ["BTC","SUI"])
-        print("Done")
+        let assetDTO = await AssetFetcherService.shared.fetchAsset(symbol: asset.symbol)
+        
+        if assetDTO.symbol == "ERR" {
+            errorTitle = "Error!"
+            errorMessage = "Failed to update asset from remote. Please try again later."
+            showingError = true
+            asset.remoteManaged = false
+            return
+        }
+        
+        asset.updateFromRemote(remoteAsset: assetDTO)
     }
 }
 
