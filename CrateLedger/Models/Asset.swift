@@ -17,9 +17,7 @@ class Asset {
     var units: Double = 0.0
     var updatedAt: Date = Date.now
     var createdAt: Date = Date.now
-    var thumbURL: String = ""
-    var smallURL: String = ""
-    var largeURL: String = ""
+    var image: String = ""
     var notes: String = ""
     var remoteManaged = false
     
@@ -34,40 +32,10 @@ class Asset {
     }
     
     var hasImage: Bool {
-        return self.thumbURL != "" || self.smallURL != "" || self.largeURL != ""
+        return self.image != ""
     }
     
-    var thumbImage: String {
-        if self.thumbURL != "" {
-            return self.thumbURL
-        } else if self.smallURL != "" {
-            return self.smallURL
-        } else {
-            return self.largeURL
-        }
-    }
-    
-    var smallImage: String {
-        if self.smallURL != "" {
-            return self.smallURL
-        } else if self.largeURL != "" {
-            return self.largeURL
-        } else {
-            return self.thumbURL
-        }
-    }
-    
-    var largeImage: String {
-        if self.largeURL != "" {
-            return self.largeURL
-        } else if self.smallURL != "" {
-            return self.smallURL
-        } else {
-            return self.thumbURL
-        }
-    }
-    
-    init(name: String, type: String, price: Double, symbol: String, units: Double = 0.0, updatedAt: Date = .now, createdAt: Date = .now, thumbURL: String = "", smallURL: String = "", largeURL: String = "", notes: String = "") {
+    init(name: String, type: String, price: Double, symbol: String, units: Double = 0.0, updatedAt: Date = .now, createdAt: Date = .now, image: String = "", notes: String = "") {
         self.name = name
         self.type = type
         self.price = price
@@ -75,9 +43,7 @@ class Asset {
         self.units = units
         self.updatedAt = updatedAt
         self.createdAt = createdAt
-        self.thumbURL = thumbURL
-        self.smallURL = smallURL
-        self.largeURL = largeURL
+        self.image = image
         self.notes = notes
     }
     
@@ -86,9 +52,7 @@ class Asset {
         self.type = remoteAsset.type
         self.price = remoteAsset.price
         self.symbol = remoteAsset.symbol
-        self.thumbURL = remoteAsset.thumbURL ?? ""
-        self.smallURL = remoteAsset.smallURL ?? ""
-        self.largeURL = remoteAsset.largeURL ?? ""
+        self.image = remoteAsset.image ?? ""
     }
     
     func updateFromRemote(remoteAsset: AssetDTO) {
@@ -96,8 +60,6 @@ class Asset {
         self.type = remoteAsset.type
         self.price = remoteAsset.price
         self.updatedAt = Date.now
-        self.thumbURL = remoteAsset.thumbURL ?? ""
-        self.smallURL = remoteAsset.smallURL ?? ""
-        self.largeURL = remoteAsset.largeURL ?? ""
+        self.image = remoteAsset.image ?? ""
     }
 }

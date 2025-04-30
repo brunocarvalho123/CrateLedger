@@ -80,7 +80,5 @@ struct AssetDTO: Codable {
     let type: String
     let price: Double
     let symbol: String
-    var thumbURL: String?
-    var smallURL: String?
-    var largeURL: String?
+    var image: String?
 }

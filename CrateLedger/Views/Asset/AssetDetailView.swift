@@ -25,7 +25,7 @@ struct AssetDetailView: View {
     var body: some View {
         VStack {
             if asset.hasImage {
-                AsyncImage(url: URL(string: asset.largeImage)) { phase in
+                AsyncImage(url: URL(string: asset.image)) { phase in
                     if let image = phase.image {
                         image
                             .resizable()

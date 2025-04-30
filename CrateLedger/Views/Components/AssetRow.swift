@@ -14,7 +14,7 @@ struct AssetRow: View {
     var body: some View {
         HStack {
             if asset.hasImage {
-                AsyncImage(url: URL(string: asset.smallImage)) { phase in
+                AsyncImage(url: URL(string: asset.image)) { phase in
                     if let image = phase.image {
                         image
                             .resizable()
@@ -28,11 +28,11 @@ struct AssetRow: View {
                         ProgressView()
                     }
                 }
-                .frame(width: 48, height: 48)
+                .frame(width: 65, height: 48)
             } else {
                 Text(asset.symbol)
                     .font(.largeTitle)
-                    .frame(height: 48)
+                    .frame(width: 65, height: 48)
             }
             VStack(alignment: .leading) {
                 Text(asset.name)
@@ -48,7 +48,7 @@ struct AssetRow: View {
     do {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: Portfolio.self, configurations: config)
-        let asset = Asset(name: "Test Asset", type: "crypto", price: 32.23, symbol: "TEST", units: 1.3, thumbURL: "https://assets.coingecko.com/coins/images/26375/standard/sui-ocean-square.png?1727791290")
+        let asset = Asset(name: "Test Asset", type: "crypto", price: 32.23, symbol: "TEST", units: 1.3, image: "https://assets.coingecko.com/coins/images/26375/standard/sui-ocean-square.png?1727791290")
         return AssetRow(asset: asset)
             .modelContainer(container)
     } catch {
