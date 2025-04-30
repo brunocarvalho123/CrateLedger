@@ -17,14 +17,30 @@ struct PortfolioView: View {
 
     var body: some View {
         NavigationStack {
-            Text("Value: \(portfolio.value, format: .currency(code: "USD"))")
-            List {
-                ForEach(portfolio.assets) { asset in
-                    NavigationLink(value: asset) {
-                        AssetRow(asset: asset)
+            VStack {
+                if portfolio.hasAssets {
+                    Text("Value: \(portfolio.value, format: .currency(code: "USD"))")
+                    List {
+                        ForEach(portfolio.assets) { asset in
+                            NavigationLink(value: asset) {
+                                AssetRow(asset: asset)
+                            }
+                        }
+                        .onDelete(perform: deleteAsset)
                     }
+                } else {
+                    ContentUnavailableView {
+                        Label("No Assets", systemImage: "magnifyingglass")
+                    } description: {
+                        Text("You don't have any saved assets in this portfolio.")
+                    } actions: {
+                        Button("Create an asset") {
+                            showingAddScreen = true
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                    .padding()
                 }
-                .onDelete(perform: deleteAsset)
             }
             .navigationTitle($portfolio.name)
             .navigationBarTitleDisplayMode(.inline)

@@ -23,6 +23,10 @@ class Portfolio {
         return self.assets.filter({ $0.remoteManaged && $0.updatedAt <= staleInterval })
     }
     
+    var hasAssets: Bool {
+        !assets.isEmpty
+    }
+    
     init(name: String, assets: [Asset] = []) {
         self.name = name
         self.assets = assets
