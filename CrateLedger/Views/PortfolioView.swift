@@ -44,7 +44,7 @@ struct PortfolioView: View {
             .navigationTitle($portfolio.name)
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: Asset.self) { asset in
-                AssetDetailView(portfolio: portfolio, asset: asset, isNew: false)
+                AssetDetailView(portfolio: portfolio, asset: asset)
             }
             .onAppear {
                 Task {
@@ -62,7 +62,7 @@ struct PortfolioView: View {
                 }
             }
             .sheet(isPresented: $viewModel.showingAddScreen) {
-                AssetDetailView(portfolio: portfolio, asset: Asset.empty(), isNew: true)
+                AssetDetailView(portfolio: portfolio, asset: Asset.empty())
             }
             .overlay {
                 if viewModel.isLoading {

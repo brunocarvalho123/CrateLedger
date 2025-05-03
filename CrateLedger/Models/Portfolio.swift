@@ -32,6 +32,16 @@ class Portfolio {
         self.assets = assets
     }
     
+    func insert(asset: Asset) {
+        if asset.hasRequiredFields && !includes(asset: asset) {
+            assets.append(asset)
+        }
+    }
+    
+    func includes(asset: Asset) -> Bool {
+        assets.contains(where: { $0.key == asset.key })
+    }
+    
     #if DEBUG
     static func example() -> Portfolio {
         Portfolio(name: "Test Portfolio", assets: [Asset.example()])

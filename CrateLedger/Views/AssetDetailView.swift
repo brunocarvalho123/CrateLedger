@@ -14,13 +14,8 @@ struct AssetDetailView: View {
 
     @Bindable var portfolio: Portfolio
     @Bindable var asset: Asset
-    var isNew: Bool = true
     
-    @State private var showingDeleteAlert = false
-    @State private var showingError = false
-    @State private var isLoading = false
-    @State private var errorTitle = ""
-    @State private var errorMessage = ""
+    @State private var viewModel = ViewModel()
 
     var body: some View {
         VStack {
@@ -42,14 +37,11 @@ struct AssetDetailView: View {
             Form {
                 Section("Asset info") {
                     TextField("Name", text: $asset.name)
-                        .disabled(asset.remoteManaged)
                     TextField("Symbol", text: $asset.symbol)
-                        .disabled(asset.remoteManaged)
                     TextField("Type", text: $asset.type)
-                        .disabled(asset.remoteManaged)
                     TextField("Price", value: $asset.price, format: .currency(code: "USD"))
-                        .disabled(asset.remoteManaged)
                 }
+                .disabled(asset.remoteManaged)
                 Section("Amount") {
                     TextField("Amount held", value: $asset.units, format: .number)
                 }
@@ -62,74 +54,45 @@ struct AssetDetailView: View {
                         .onChange(of: asset.remoteManaged) {
                             if asset.remoteManaged {
                                 Task {
-                                    await updateRemoteAsset()
+                                    await viewModel.remoteFetch(asset: asset)
                                 }
                             }
                         }
                         .disabled(asset.symbol.isEmpty)
-                    Button("Fetch Asset") {
-                        Task {
-                            await updateRemoteAsset()
-                        }
-                    }
-                    if (isNew) {
-                        Button("Save") {
-                            if asset.symbol.isEmpty == false && asset.name.isEmpty == false && asset.type.isEmpty == false {
-                                portfolio.assets.append(asset)
-                            }
-                            dismiss()
-                        }
-                    } else {
-                        Button("Done") {
-                            dismiss()
-                        }
+                    Button("OK") {
+                        viewModel.save(portfolio: portfolio, asset: asset)
+                        dismiss()
                     }
                 }
             }
         }
         .navigationTitle("Edit asset")
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Delete asset", isPresented: $showingDeleteAlert) {
+        .alert("Delete asset", isPresented: $viewModel.showingDeleteAlert) {
             Button("Delete", role: .destructive, action: deleteAsset)
             Button("Cancel", role: .cancel) { }
         } message: {
             Text("Are you sure?")
         }
-        .alert(errorTitle, isPresented: $showingError) { } message: {
-            Text(errorMessage)
+        .alert(viewModel.errorTitle, isPresented: $viewModel.showingError) { } message: {
+            Text(viewModel.errorMessage)
         }
         .toolbar {
             Button("Delete this asset", systemImage: "trash") {
-                showingDeleteAlert = true
+                viewModel.showingDeleteAlert = true
             }
         }
         .overlay {
-            if isLoading {
+            if viewModel.isLoading {
                 ProgressView()
             }
         }
     }
     
+    // Cant move this to ViewModel because of modelContext call
     func deleteAsset() {
         modelContext.delete(asset)
         dismiss()
-    }
-    
-    func updateRemoteAsset() async {
-        isLoading = true
-        defer { isLoading = false }
-        
-        let assetDTO = await AssetFetcherService.shared.fetchAsset(symbol: asset.symbol)
-        
-        if assetDTO.symbol == "ERR" {
-            errorTitle = "Error!"
-            errorMessage = "Failed to update asset from remote. Please try again later."
-            showingError = true
-            asset.remoteManaged = false
-            return
-        }
-        
-        asset.updateFromRemote(remoteAsset: assetDTO)
     }
 }
 

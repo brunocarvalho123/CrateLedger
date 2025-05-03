@@ -35,6 +35,14 @@ class Asset {
         return self.image != ""
     }
     
+    var hasRequiredFields: Bool {
+        return self.name != "" && self.type != "" && self.symbol != ""
+    }
+    
+    var key: String {
+        return "\(self.type)_\(self.symbol.uppercased())"
+    }
+    
     init(name: String, type: String, price: Double, symbol: String, units: Double = 0.0, updatedAt: Date = .now, createdAt: Date = .now, image: String = "", notes: String = "") {
         self.name = name
         self.type = type
