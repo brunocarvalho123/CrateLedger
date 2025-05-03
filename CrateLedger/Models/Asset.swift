@@ -63,6 +63,10 @@ class Asset {
         self.image = remoteAsset.image ?? ""
     }
     
+    static func empty() -> Asset {
+        Asset(name: "", type: "", price: 0, symbol: "", units: 0)
+    }
+    
     #if DEBUG
     static func example() -> Asset {
         Asset(name: "Test Asset", type: "crypto", price: 32.23, symbol: "TEST", units: 1.3, image: "https://assets.coingecko.com/coins/images/26375/standard/sui-ocean-square.png?1727791290")

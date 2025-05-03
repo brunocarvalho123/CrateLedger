@@ -12,8 +12,7 @@ struct PortfolioView: View {
     @Environment(\.modelContext) var modelContext
     @Bindable var portfolio: Portfolio
     
-    @State private var showingAddScreen = false
-    @State private var isLoading = false
+    @State private var viewModel = ViewModel()
 
     var body: some View {
         NavigationStack {
@@ -35,7 +34,7 @@ struct PortfolioView: View {
                         Text("You don't have any saved assets in this portfolio.")
                     } actions: {
                         Button("Create an asset") {
-                            showingAddScreen = true
+                            viewModel.showingAddScreen = true
                         }
                         .buttonStyle(.borderedProminent)
                     }
@@ -49,7 +48,7 @@ struct PortfolioView: View {
             }
             .onAppear {
                 Task {
-                    await updateRemoteAssets()
+                    await viewModel.refreshAssetPrices(portfolio: portfolio)
                 }
             }
             .toolbar {
@@ -58,42 +57,26 @@ struct PortfolioView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add asset", systemImage: "plus") {
-                        showingAddScreen = true
+                        viewModel.showingAddScreen = true
                     }
                 }
             }
-            .sheet(isPresented: $showingAddScreen) {
-                AssetDetailView(portfolio: portfolio, asset: Asset(name: "", type: "", price: 0, symbol: "", units: 0), isNew: true)
+            .sheet(isPresented: $viewModel.showingAddScreen) {
+                AssetDetailView(portfolio: portfolio, asset: Asset.empty(), isNew: true)
             }
             .overlay {
-                if isLoading {
+                if viewModel.isLoading {
                     ProgressView()
                 }
             }
         }
     }
     
+    // Cant move this to ViewModel because of modelContext call
     func deleteAsset(at offsets: IndexSet) {
         for offset in offsets {
             let asset = portfolio.assets[offset]
             modelContext.delete(asset)
-        }
-    }
-    
-    func updateRemoteAssets() async {
-        let remoteAssets = portfolio.staleAssets
-        if remoteAssets.count == 0 {
-            return
-        }
-
-        isLoading = true
-        defer { isLoading = false }
-        
-        let assetsDTO = await AssetFetcherService.shared.fetchAssets(symbols: remoteAssets.map(\.symbol))
-        for assetDTO in assetsDTO {
-            if assetDTO.symbol != "ERR" {
-                remoteAssets.filter({ $0.symbol == assetDTO.symbol }).first?.updateFromRemote(remoteAsset: assetDTO)
-            }
         }
     }
 }
