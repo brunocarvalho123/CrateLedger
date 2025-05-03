@@ -137,8 +137,8 @@ struct AssetDetailView: View {
     do {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: Asset.self, configurations: config)
-        let asset = Asset(name: "Test Asset", type: "crypto", price: 32.23, symbol: "TEST", units: 1.3)
-        let portfolio = Portfolio(name: "Test Portfolio", assets: [asset])
+        let asset = Asset.example()
+        let portfolio = Portfolio.example()
         return AssetDetailView(portfolio: portfolio, asset: asset)
             .modelContainer(container)
     } catch {

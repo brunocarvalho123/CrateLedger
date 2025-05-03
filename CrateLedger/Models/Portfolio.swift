@@ -31,4 +31,10 @@ class Portfolio {
         self.name = name
         self.assets = assets
     }
+    
+    #if DEBUG
+    static func example() -> Portfolio {
+        Portfolio(name: "Test Portfolio", assets: [Asset.example()])
+    }
+    #endif
 }

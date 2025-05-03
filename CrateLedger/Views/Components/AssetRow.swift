@@ -48,7 +48,7 @@ struct AssetRow: View {
     do {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: Portfolio.self, configurations: config)
-        let asset = Asset(name: "Test Asset", type: "crypto", price: 32.23, symbol: "TEST", units: 1.3, image: "https://assets.coingecko.com/coins/images/26375/standard/sui-ocean-square.png?1727791290")
+        let asset = Asset.example()
         return AssetRow(asset: asset)
             .modelContainer(container)
     } catch {

@@ -62,4 +62,10 @@ class Asset {
         self.updatedAt = Date.now
         self.image = remoteAsset.image ?? ""
     }
+    
+    #if DEBUG
+    static func example() -> Asset {
+        Asset(name: "Test Asset", type: "crypto", price: 32.23, symbol: "TEST", units: 1.3, image: "https://assets.coingecko.com/coins/images/26375/standard/sui-ocean-square.png?1727791290")
+    }
+    #endif
 }
