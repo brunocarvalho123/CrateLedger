@@ -11,7 +11,9 @@ extension PortfolioView {
     @Observable
     class ViewModel {
         var showingAddScreen = false
+        var showingAssetOptions = false
         var isLoading = false
+        var selectedType: Asset.TypeEnum = Asset.TypeEnum.other
         
         func refreshAssetPrices(portfolio: Portfolio) async {
             let remoteAssets = portfolio.staleAssets

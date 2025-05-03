@@ -34,7 +34,7 @@ struct PortfolioView: View {
                         Text("You don't have any saved assets in this portfolio.")
                     } actions: {
                         Button("Create an asset") {
-                            viewModel.showingAddScreen = true
+                            viewModel.showingAssetOptions = true
                         }
                         .buttonStyle(.borderedProminent)
                     }
@@ -57,16 +57,24 @@ struct PortfolioView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add asset", systemImage: "plus") {
-                        viewModel.showingAddScreen = true
+                        viewModel.showingAssetOptions = true
                     }
                 }
             }
             .sheet(isPresented: $viewModel.showingAddScreen) {
-                AssetDetailView(portfolio: portfolio, asset: Asset.empty())
+                AssetDetailView(portfolio: portfolio, asset: Asset.empty(type: viewModel.selectedType))
             }
             .overlay {
                 if viewModel.isLoading {
                     ProgressView()
+                }
+            }
+            .confirmationDialog("Choose asset type", isPresented: $viewModel.showingAssetOptions, titleVisibility: .visible) {
+                ForEach(Asset.TypeEnum.allCases) { type in
+                    Button(type.displayName) {
+                        viewModel.selectedType = type
+                        viewModel.showingAddScreen = true
+                    }
                 }
             }
         }

@@ -35,10 +35,10 @@ struct AssetDetailView: View {
                 .frame(height: 100)
             }
             Form {
+                Text("Asset type: \(asset.type.displayName)")
                 Section("Asset info") {
                     TextField("Name", text: $asset.name)
                     TextField("Symbol", text: $asset.symbol)
-                    TextField("Type", text: $asset.type)
                     TextField("Price", value: $asset.price, format: .currency(code: "USD"))
                 }
                 .disabled(asset.remoteManaged)
