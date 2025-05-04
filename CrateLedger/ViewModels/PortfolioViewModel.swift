@@ -25,7 +25,7 @@ extension PortfolioView {
             isLoading = true
             defer { isLoading = false }
             
-            let assetsDTO = await AssetFetcherService.shared.fetchAssets(symbols: remoteAssets.map(\.symbol))
+            let assetsDTO = await AssetFetcherService.shared.fetchAssets(keys: remoteAssets.map(\.key))
             for assetDTO in assetsDTO {
                 if assetDTO.symbol != "ERR" {
                     remoteAssets.first(where: { $0.symbol == assetDTO.symbol })?.updateFromRemote(remoteAsset: assetDTO)

@@ -14,29 +14,12 @@ class AssetFetcherService {
     
     private init() { }
     
-    func fetchAllAssets() async -> [AssetDTO] {
-        let url = baseURL.appendingPathComponent("assets")
-        
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let decoder = JSONDecoder()
-            let items = try decoder.decode([AssetDTO].self, from: data)
-
-            return items
-        } catch {
-            // if we're still here it means the request failed somehow
-            print("Failed to fetch assets: \(error.localizedDescription)")
-        }
-        
-        return [AssetDTO(name: "Error", type: "error", price: 0.0, symbol: "ERR")]
-    }
-    
-    // Fetch multiple assets by symbols
-    func fetchAssets(symbols: [String]) async -> [AssetDTO] {
+    // Fetch multiple assets by keys
+    func fetchAssets(keys: [String]) async -> [AssetDTO] {
         do {
             var urlComponents = URLComponents(string: baseURL.appendingPathComponent("assets/query").absoluteString)!
             urlComponents.queryItems = [
-                URLQueryItem(name: "symbol", value: symbols.joined(separator: ","))
+                URLQueryItem(name: "keys", value: keys.joined(separator: ","))
             ]
             let url = urlComponents.url!
 
@@ -57,9 +40,9 @@ class AssetFetcherService {
         return [AssetDTO(name: "Error", type: "error", price: 0.0, symbol: "ERR")]
     }
     
-    // Fetch a single asset by symbol
-    func fetchAsset(symbol: String) async -> AssetDTO {
-        let url = baseURL.appendingPathComponent("assets/\(symbol)")
+    // Fetch a single asset by key
+    func fetchAsset(key: String) async -> AssetDTO {
+        let url = baseURL.appendingPathComponent("assets/\(key)")
         
         do {
             let (data, _) = try await URLSession.shared.data(from: url)

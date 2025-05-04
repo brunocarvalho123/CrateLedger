@@ -28,7 +28,7 @@ extension AssetDetailView {
             isLoading = true
             defer { isLoading = false }
             
-            let assetDTO = await AssetFetcherService.shared.fetchAsset(symbol: asset.symbol)
+            let assetDTO = await AssetFetcherService.shared.fetchAsset(key: asset.key)
             
             if assetDTO.symbol == "ERR" {
                 errorTitle = "Error!"
