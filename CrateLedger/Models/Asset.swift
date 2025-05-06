@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import SwiftUI
 
 @Model
 class Asset {
@@ -106,6 +107,18 @@ class Asset {
             case .metal: return "cube.transparent"
             case .cash: return "dollarsign.circle"
             case .other: return "questionmark.circle"
+            }
+        }
+        
+        var color: Color {
+            switch self {
+            case .crypto: return Color.red
+            case .stock: return Color.blue
+            case .etf: return Color.pink
+            case .bond: return Color.purple
+            case .metal: return Color.yellow
+            case .cash: return Color.green
+            case .other: return Color.gray
             }
         }
         

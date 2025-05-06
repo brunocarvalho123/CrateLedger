@@ -6,13 +6,42 @@
 //
 
 import SwiftUI
+import SwiftData
+import Charts
 
 struct PortfolioSummaryView: View {
+    @Environment(\.modelContext) var modelContext
+    @Bindable var portfolio: Portfolio
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Chart(Asset.TypeEnum.allCases) { assetType in
+                SectorMark(
+                    angle: .value("Value", portfolio.valueIn(type: assetType)),
+                    innerRadius: .ratio(0.5),
+                    angularInset: 1.5
+                )
+                .foregroundStyle(assetType.color)
+            }
+            .frame(height: 200)
+
+            Text("Total Value: \(portfolio.value.formatted(.currency(code: "USD")))")
+                .font(.headline)
+                .padding(.top, 16)
+        }
+        .padding()
     }
 }
 
 #Preview {
-    PortfolioSummaryView()
+    do {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: Portfolio.self, configurations: config)
+        let portfolio = Portfolio.example()
+        return PortfolioSummaryView(portfolio: portfolio)
+            .modelContainer(container)
+    } catch {
+        return Text("Failed to create container: \(error.localizedDescription)")
+    }
 }
+

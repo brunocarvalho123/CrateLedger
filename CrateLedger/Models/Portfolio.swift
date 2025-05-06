@@ -42,6 +42,10 @@ class Portfolio {
         assets.contains(where: { $0.key == asset.key })
     }
     
+    func valueIn(type: Asset.TypeEnum) -> Double {
+        self.assets.filter({ $0.type == type }).reduce(0) { $0 + $1.value }
+    }
+    
     #if DEBUG
     static func example() -> Portfolio {
         Portfolio(name: "Test Portfolio", assets: [Asset.example()])

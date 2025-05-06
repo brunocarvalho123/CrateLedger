@@ -18,7 +18,7 @@ struct PortfolioView: View {
         NavigationStack {
             VStack {
                 if portfolio.hasAssets {
-                    Text("Value: \(portfolio.value, format: .currency(code: "USD"))")
+                    PortfolioSummaryView(portfolio: portfolio)
                     List {
                         ForEach(portfolio.assets) { asset in
                             NavigationLink(value: asset) {
