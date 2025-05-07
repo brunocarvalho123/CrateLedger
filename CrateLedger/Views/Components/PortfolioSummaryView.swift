@@ -17,19 +17,20 @@ struct PortfolioSummaryView: View {
         VStack {
             Chart(Asset.TypeEnum.allCases) { assetType in
                 SectorMark(
-                    angle: .value("Value", portfolio.valueIn(type: assetType)),
+                    angle: .value("Value", portfolio.valueIn(types: [assetType])),
                     innerRadius: .ratio(0.5),
                     angularInset: 1.5
                 )
                 .foregroundStyle(assetType.color)
             }
-            .frame(height: 200)
+            .frame(height: 150)
 
-            Text("Total Value: \(portfolio.value.formatted(.currency(code: "USD")))")
-                .font(.headline)
-                .padding(.top, 16)
+            Text(portfolio.value.formatted(.currency(code: "USD")))
+                .font(.title)
+                .bold()
+                .padding(.top, 14)
         }
-        .padding()
+        .padding(.top)
     }
 }
 

@@ -9,7 +9,6 @@ import SwiftUI
 import SwiftData
 
 struct PortfolioView: View {
-    @Environment(\.modelContext) var modelContext
     @Bindable var portfolio: Portfolio
     
     @State private var viewModel = ViewModel()
@@ -19,14 +18,7 @@ struct PortfolioView: View {
             VStack {
                 if portfolio.hasAssets {
                     PortfolioSummaryView(portfolio: portfolio)
-                    List {
-                        ForEach(portfolio.assets) { asset in
-                            NavigationLink(value: asset) {
-                                AssetRow(asset: asset)
-                            }
-                        }
-                        .onDelete(perform: deleteAsset)
-                    }
+                    TypeList(portfolio: portfolio)
                 } else {
                     ContentUnavailableView {
                         Label("No Assets", systemImage: "magnifyingglass")
@@ -45,6 +37,9 @@ struct PortfolioView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: Asset.self) { asset in
                 AssetDetailView(portfolio: portfolio, asset: asset)
+            }
+            .navigationDestination(for: Asset.TypeEnum.self) { type in
+                AssetList(portfolio: portfolio, types: [type])
             }
             .onAppear {
                 Task {
@@ -77,14 +72,6 @@ struct PortfolioView: View {
                     }
                 }
             }
-        }
-    }
-    
-    // Cant move this to ViewModel because of modelContext call
-    func deleteAsset(at offsets: IndexSet) {
-        for offset in offsets {
-            let asset = portfolio.assets[offset]
-            modelContext.delete(asset)
         }
     }
 }

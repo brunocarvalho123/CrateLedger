@@ -46,6 +46,18 @@ class Portfolio {
         self.assets.filter({ $0.type == type }).reduce(0) { $0 + $1.value }
     }
     
+    func valueIn(types: [Asset.TypeEnum]) -> Double {
+        self.assets.filter({ types.contains($0.type) }).reduce(0) { $0 + $1.value }
+    }
+    
+    func assets(type: Asset.TypeEnum) -> [Asset] {
+        self.assets.filter({ $0.type == type })
+    }
+    
+    func assets(types: [Asset.TypeEnum]) -> [Asset] {
+        self.assets.filter({ types.contains($0.type) })
+    }
+    
     #if DEBUG
     static func example() -> Portfolio {
         Portfolio(name: "Test Portfolio", assets: [Asset.example()])

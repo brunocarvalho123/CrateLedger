@@ -13,27 +13,35 @@ struct AssetRow: View {
 
     var body: some View {
         HStack {
-            if asset.hasImage {
-                AsyncImage(url: URL(string: asset.image)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    } else if phase.error != nil {
-                        // Error
-                        Text(asset.symbol)
-                            .font(.largeTitle)
-                    } else {
-                        // Placeholder
-                        ProgressView()
+            VStack {
+                if asset.hasImage {
+                    AsyncImage(url: URL(string: asset.image)) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 48, height: 48)
+                        } else if phase.error != nil {
+                            // Error
+                            Text(asset.symbol)
+                                .bold()
+                                .frame(width: 48, height: 48)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
+                        } else {
+                            // Placeholder
+                            ProgressView()
+                        }
                     }
+                } else {
+                    Text(asset.symbol)
+                        .bold()
+                        .frame(width: 48, height: 48)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                 }
-                .frame(width: 65, height: 48)
-            } else {
-                Text(asset.symbol)
-                    .font(.largeTitle)
-                    .frame(width: 65, height: 48)
             }
+            .padding(.trailing)
             VStack(alignment: .leading) {
                 Text(asset.name)
                     .font(.headline)
