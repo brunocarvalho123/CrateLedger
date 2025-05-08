@@ -19,6 +19,9 @@ struct PortfolioView: View {
                 if portfolio.hasAssets {
                     PortfolioSummaryView(portfolio: portfolio)
                     TypeList(portfolio: portfolio)
+                    NavigationLink(destination: AssetList(portfolio: portfolio)) {
+                        Text("All assets")
+                    }
                 } else {
                     ContentUnavailableView {
                         Label("No Assets", systemImage: "magnifyingglass")
@@ -35,9 +38,6 @@ struct PortfolioView: View {
             }
             .navigationTitle($portfolio.name)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: Asset.self) { asset in
-                AssetDetailView(portfolio: portfolio, asset: asset)
-            }
             .navigationDestination(for: Asset.TypeEnum.self) { type in
                 AssetList(portfolio: portfolio, types: [type])
             }
@@ -47,9 +47,6 @@ struct PortfolioView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    EditButton()
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add asset", systemImage: "plus") {
                         viewModel.showingAssetOptions = true

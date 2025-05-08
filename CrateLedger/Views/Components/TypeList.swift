@@ -6,11 +6,9 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct TypeList: View {
-    @Environment(\.modelContext) var modelContext
-    @Bindable var portfolio: Portfolio
+    var portfolio: Portfolio
 
     var body: some View {
         List {
@@ -30,6 +28,12 @@ struct TypeList: View {
                                 Text(portfolio.valueIn(type: type), format: .currency(code: "USD"))
                                     .foregroundStyle(.secondary)
                             }
+                            
+                            Spacer()
+
+                            Circle()
+                                .fill(type.color)
+                                .frame(width: 10, height: 10)
                         }
                     }
                 }
@@ -39,13 +43,5 @@ struct TypeList: View {
 }
 
 #Preview {
-    do {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: Portfolio.self, configurations: config)
-        let portfolio = Portfolio.example()
-        return PortfolioView(portfolio: portfolio)
-            .modelContainer(container)
-    } catch {
-        return Text("Failed to create container: \(error.localizedDescription)")
-    }
+    PortfolioView(portfolio: Portfolio.example())
 }

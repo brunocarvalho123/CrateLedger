@@ -8,8 +8,20 @@
 import SwiftUI
 import SwiftData
 
+struct AssetSymbolLogo: View {
+    var asset: Asset
+    
+    var body: some View {
+        Text(asset.symbol)
+            .bold()
+            .frame(width: 48, height: 48)
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
+    }
+}
+
 struct AssetRow: View {
-    @Bindable var asset: Asset
+    var asset: Asset
 
     var body: some View {
         HStack {
@@ -23,22 +35,15 @@ struct AssetRow: View {
                                 .frame(width: 48, height: 48)
                         } else if phase.error != nil {
                             // Error
-                            Text(asset.symbol)
-                                .bold()
-                                .frame(width: 48, height: 48)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.5)
+                            AssetSymbolLogo(asset: asset)
                         } else {
                             // Placeholder
                             ProgressView()
+                                .frame(width: 48, height: 48)
                         }
                     }
                 } else {
-                    Text(asset.symbol)
-                        .bold()
-                        .frame(width: 48, height: 48)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.5)
+                    AssetSymbolLogo(asset: asset)
                 }
             }
             .padding(.trailing)

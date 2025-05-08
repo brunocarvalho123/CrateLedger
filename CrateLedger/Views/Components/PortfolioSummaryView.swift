@@ -10,15 +10,14 @@ import SwiftData
 import Charts
 
 struct PortfolioSummaryView: View {
-    @Environment(\.modelContext) var modelContext
-    @Bindable var portfolio: Portfolio
+    var portfolio: Portfolio
 
     var body: some View {
         VStack {
             Chart(Asset.TypeEnum.allCases) { assetType in
                 SectorMark(
                     angle: .value("Value", portfolio.valueIn(types: [assetType])),
-                    innerRadius: .ratio(0.5),
+                    innerRadius: .ratio(0.44),
                     angularInset: 1.5
                 )
                 .foregroundStyle(assetType.color)
@@ -35,14 +34,6 @@ struct PortfolioSummaryView: View {
 }
 
 #Preview {
-    do {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: Portfolio.self, configurations: config)
-        let portfolio = Portfolio.example()
-        return PortfolioSummaryView(portfolio: portfolio)
-            .modelContainer(container)
-    } catch {
-        return Text("Failed to create container: \(error.localizedDescription)")
-    }
+    PortfolioSummaryView(portfolio: Portfolio.example())
 }
 
