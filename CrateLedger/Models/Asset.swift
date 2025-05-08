@@ -112,13 +112,13 @@ class Asset {
         
         var color: Color {
             switch self {
-            case .crypto: return Color.red
-            case .stock: return Color.blue
-            case .etf: return Color.pink
-            case .bond: return Color.purple
-            case .metal: return Color.yellow
-            case .cash: return Color.green
-            case .other: return Color.gray
+            case .crypto: return Color(hex: "#468FF2")     // Soft blue (used in logo)
+            case .stock:  return Color(hex: "#94A3B8")     // Slate gray (neutral, professional)
+            case .etf:    return Color(hex: "#5E60CE")     // Muted indigo (financial, stable)
+            case .bond:   return Color(hex: "#3A506B")     // Steely blue (serious tone)
+            case .metal:  return Color(hex: "#F4C430")     // Gold-ish yellow (precious metals)
+            case .cash:   return Color(hex: "#38B2AC")     // Teal (represents liquidity)
+            case .other:  return Color(hex: "#CBD5E1")     // Light gray (default, de-emphasized)
             }
         }
         
