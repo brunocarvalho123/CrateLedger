@@ -1,5 +1,5 @@
 //
-//  PortfolioView.swift
+//  SummaryView.swift
 //  CrateLedger
 //
 //  Created by Bruno Carvalho on 26/04/2025.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct PortfolioView: View {
+struct SummaryView: View {
     @Bindable var portfolio: Portfolio
     
     @State private var viewModel = ViewModel()
@@ -17,11 +17,8 @@ struct PortfolioView: View {
         NavigationStack {
             VStack {
                 if portfolio.hasAssets {
-                    PortfolioSummaryView(portfolio: portfolio)
-                    TypeList(portfolio: portfolio)
-                    NavigationLink(destination: AssetList(portfolio: portfolio)) {
-                        Text("All assets")
-                    }
+                    SummaryChart(portfolio: portfolio)
+                    SummaryTypeList(portfolio: portfolio)
                 } else {
                     ContentUnavailableView {
                         Label("No Assets", systemImage: "magnifyingglass")
@@ -54,7 +51,7 @@ struct PortfolioView: View {
                 }
             }
             .sheet(isPresented: $viewModel.showingAddScreen) {
-                AssetDetailView(portfolio: portfolio, asset: Asset.empty(type: viewModel.selectedType))
+                AssetView(portfolio: portfolio, asset: Asset.empty(type: viewModel.selectedType))
             }
             .overlay {
                 if viewModel.isLoading {
@@ -78,7 +75,7 @@ struct PortfolioView: View {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: Portfolio.self, configurations: config)
         let portfolio = Portfolio.example()
-        return PortfolioView(portfolio: portfolio)
+        return SummaryView(portfolio: portfolio)
             .modelContainer(container)
     } catch {
         return Text("Failed to create container: \(error.localizedDescription)")

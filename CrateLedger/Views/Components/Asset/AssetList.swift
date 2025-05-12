@@ -15,7 +15,7 @@ struct AssetList: View {
     
     @State private var showingAssetOptions = false
     @State private var showingAddScreen = false
-    @State private var selectedType: Asset.TypeEnum?
+    @State private var selectedType: Asset.TypeEnum? = nil
     
     @State private var searchText = ""
     
@@ -52,7 +52,7 @@ struct AssetList: View {
                     .padding()
                 } else {
                     ForEach(filteredAssets) { asset in
-                        NavigationLink(destination: AssetDetailView(portfolio: portfolio, asset: asset)) {
+                        NavigationLink(destination: AssetView(portfolio: portfolio, asset: asset)) {
                             AssetRow(asset: asset)
                         }
                     }
@@ -75,7 +75,7 @@ struct AssetList: View {
             }
         }
         .sheet(isPresented: $showingAddScreen) {
-            AssetDetailView(portfolio: portfolio, asset: Asset.empty(type: selectedType ?? .crypto))
+            AssetView(portfolio: portfolio, asset: Asset.empty(type: selectedType ?? .crypto))
         }
         .confirmationDialog("Choose asset type", isPresented: $showingAssetOptions, titleVisibility: .visible) {
             ForEach(types ?? Asset.TypeEnum.allCases) { type in

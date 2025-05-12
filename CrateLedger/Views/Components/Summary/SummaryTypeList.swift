@@ -1,5 +1,5 @@
 //
-//  TypeListView.swift
+//  SummaryTypeList.swift
 //  CrateLedger
 //
 //  Created by Bruno Carvalho on 07/05/2025.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TypeList: View {
+struct SummaryTypeList: View {
     var portfolio: Portfolio
 
     var body: some View {
@@ -43,5 +43,5 @@ struct TypeList: View {
 }
 
 #Preview {
-    PortfolioView(portfolio: Portfolio.example())
+    SummaryView(portfolio: Portfolio.example())
 }

@@ -1,5 +1,5 @@
 //
-//  PortfolioSummaryView.swift
+//  SummaryChart.swift
 //  CrateLedger
 //
 //  Created by Bruno Carvalho on 26/04/2025.
@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 import Charts
 
-struct PortfolioSummaryView: View {
+struct SummaryChart: View {
     var portfolio: Portfolio
 
     var body: some View {
@@ -34,6 +34,6 @@ struct PortfolioSummaryView: View {
 }
 
 #Preview {
-    PortfolioSummaryView(portfolio: Portfolio.example())
+    SummaryChart(portfolio: Portfolio.example())
 }
 

@@ -1,5 +1,5 @@
 //
-//  AssetDetailViewModel.swift
+//  AssetViewModel.swift
 //  CrateLedger
 //
 //  Created by Bruno Carvalho on 03/05/2025.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension AssetDetailView {
+extension AssetView {
     @Observable
     class ViewModel {
         var showingDeleteAlert = false

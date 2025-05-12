@@ -1,5 +1,5 @@
 //
-//  AssetDetailView.swift
+//  AssetView.swift
 //  CrateLedger
 //
 //  Created by Bruno Carvalho on 26/04/2025.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct AssetDetailView: View {
+struct AssetView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
 
@@ -102,7 +102,7 @@ struct AssetDetailView: View {
         let container = try ModelContainer(for: Asset.self, configurations: config)
         let asset = Asset.example()
         let portfolio = Portfolio.example()
-        return AssetDetailView(portfolio: portfolio, asset: asset)
+        return AssetView(portfolio: portfolio, asset: asset)
             .modelContainer(container)
     } catch {
         return Text("Failed to create container: \(error.localizedDescription)")

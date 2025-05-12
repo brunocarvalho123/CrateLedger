@@ -22,7 +22,25 @@ struct ContentView: View {
                         modelContext.insert(newPortfolio)
                     }
                 } else {
-                    PortfolioView(portfolio: portfolios[0])
+                    TabView {
+                        SummaryView(portfolio: portfolios[0])
+                            .tabItem {
+                                Label("Summary", systemImage: "chart.pie")
+                            }
+                        AssetList(portfolio: portfolios[0])
+                            .tabItem {
+                                Label("Assets", systemImage: "folder")
+                            }
+                        SearchView()
+                            .tabItem {
+                                Label("Search", systemImage: "magnifyingglass")
+                            }
+                        SettingsView()
+                            .tabItem {
+                                Label("Settings", systemImage: "gearshape")
+                            }
+                    }
+                    
                 }
             }
             .navigationTitle("Crate Ledger")

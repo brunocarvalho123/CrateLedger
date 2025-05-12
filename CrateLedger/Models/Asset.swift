@@ -65,7 +65,6 @@ class Asset {
     }
     
     func updateFromRemote(remoteAsset: AssetDTO) {
-        self.name = remoteAsset.name
         self.price = remoteAsset.price
         self.updatedAt = Date.now
         self.image = remoteAsset.image ?? ""

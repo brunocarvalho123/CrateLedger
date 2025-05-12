@@ -56,6 +56,36 @@ class AssetFetcherService {
         }
         return AssetDTO(name: "Error", type: "error", price: 0.0, symbol: "ERR")
     }
+    
+    // Search for assets
+    func searchAssets(query: String, type: Asset.TypeEnum?) async -> [SearchResult] {
+        let queryMaxSize = 50
+        let sanitizedQuery = String(query.prefix(queryMaxSize))
+        do {
+            var urlComponents = URLComponents(string: baseURL.appendingPathComponent("assets/search").absoluteString)!
+            urlComponents.queryItems = [
+                URLQueryItem(name: "query", value: sanitizedQuery)
+            ]
+            if type != nil {
+                urlComponents.queryItems?.append(URLQueryItem(name: "type", value: type!.rawValue))
+            }
+            let url = urlComponents.url!
+
+            let (data, _) = try await URLSession.shared.data(from: url)
+            
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("Server JSON:\n\(jsonString)")
+            }
+            let decoder = JSONDecoder()
+            let items = try decoder.decode([SearchResult].self, from: data)
+
+            return items
+        } catch {
+            // if we're still here it means the request failed somehow
+            print("Failed to fetch assets: \(error.localizedDescription)")
+        }
+        return []
+    }
 }
 
 struct AssetDTO: Codable {
@@ -64,4 +94,11 @@ struct AssetDTO: Codable {
     let price: Double
     let symbol: String
     var image: String?
+}
+
+struct SearchResult: Identifiable, Decodable {
+    var id: String {name + symbol + type}
+    let name: String
+    let symbol: String
+    let type: String
 }
