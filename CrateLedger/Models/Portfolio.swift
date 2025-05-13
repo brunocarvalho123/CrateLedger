@@ -19,8 +19,7 @@ class Portfolio {
     }
     
     var staleAssets: [Asset] {
-        let staleInterval = Date().addingTimeInterval(-300) // 5 minutes
-        return self.assets.filter({ $0.remoteManaged && $0.updatedAt <= staleInterval })
+        return self.assets.filter({ $0.isStale })
     }
     
     var hasAssets: Bool {

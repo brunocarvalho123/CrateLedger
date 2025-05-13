@@ -85,6 +85,24 @@ class Asset {
         return "\(self.type.id)_\(self.symbol.uppercased())"
     }
     
+    var isStale: Bool {
+        let staleInterval: TimeInterval
+
+        switch self.type {
+        case .crypto:
+            staleInterval = -300 // 5 minutes
+        case .etf, .stock:
+            staleInterval = -1800 // 30 minutes
+        case .cash, .metal:
+            staleInterval = -86400 // 24 hours
+        case .other, .bond:
+            return false
+        }
+
+        let thresholdDate = Date().addingTimeInterval(staleInterval)
+        return self.remoteManaged && self.updatedAt <= thresholdDate
+    }
+    
     init(name: String, type: TypeEnum, price: Double, symbol: String, units: Double = 0.0, updatedAt: Date = .now, createdAt: Date = .now, image: String = "", notes: String = "") {
         self.name = name
         self.type = type

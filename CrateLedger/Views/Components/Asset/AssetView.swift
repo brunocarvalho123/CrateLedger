@@ -50,9 +50,6 @@ struct AssetView: View {
                 }
                 
                 Section(asset.remoteManaged ? "Updated at: \(asset.lastUpdate)" : "") {
-//                    Task {
-//                        await viewModel.remoteFetch(asset: asset)
-//                    }
                     Button("OK") {
                         viewModel.save(portfolio: portfolio, asset: asset)
                         dismiss()
@@ -74,6 +71,13 @@ struct AssetView: View {
         .toolbar {
             Button("Delete this asset", systemImage: "trash") {
                 viewModel.showingDeleteAlert = true
+            }
+        }
+        .onAppear {
+            if asset.remoteManaged && (asset.isStale || !portfolio.includes(asset: asset))  {
+                Task {
+                    await viewModel.remoteFetch(asset: asset)
+                }
             }
         }
         .overlay {
