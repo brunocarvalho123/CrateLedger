@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct NoSearchResults: View {
+    
+    @Bindable var portfolio: Portfolio
+    
     let query: String
     let type: Asset.TypeEnum?
+    @State private var customAsset: Asset?
 
     var body: some View {
         ContentUnavailableView {
@@ -24,6 +28,9 @@ struct NoSearchResults: View {
                 .buttonStyle(.borderedProminent)
             }
         }
+        .sheet(item: $customAsset) { asset in
+            AssetView(portfolio: portfolio, asset: asset)
+        }
         .padding()
     }
     
@@ -34,15 +41,11 @@ struct NoSearchResults: View {
     
     func createCustomAsset() {
         let symbol = query.uppercased()
-        let asset = Asset.empty(type: type ?? .other)
-        asset.name = query
-        asset.symbol = symbol
-        // Navigate or present AssetView with this asset
-        // Example:
-        // navigation.push(AssetView(asset: asset, ...))
+        let asset = Asset(name: query, type: type ?? .other, price: 0.0, symbol: symbol, units: 0.0, updatedAt: .now, createdAt: .now, image: "", notes: "")
+        customAsset = asset
     }
 }
 
 #Preview {
-    NoSearchResults(query: "Test query", type: .etf)
+    NoSearchResults(portfolio: Portfolio.example(), query: "Test query", type: .etf)
 }

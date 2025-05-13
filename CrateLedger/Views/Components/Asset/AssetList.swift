@@ -26,7 +26,6 @@ struct AssetList: View {
         } else {
             tmpAssets = portfolio.assets
         }
-
         if !searchText.isEmpty {
             tmpAssets = tmpAssets.filter { $0.name.localizedCaseInsensitiveContains(searchText) || $0.symbol.localizedCaseInsensitiveContains(searchText)
             }

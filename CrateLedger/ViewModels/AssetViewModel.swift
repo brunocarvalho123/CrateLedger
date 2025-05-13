@@ -34,7 +34,6 @@ extension AssetView {
                 errorTitle = "Error!"
                 errorMessage = "Failed to update asset from remote. Please try again later."
                 showingError = true
-                asset.remoteManaged = false
                 return
             }
             

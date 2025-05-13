@@ -8,24 +8,24 @@
 import SwiftUI
 
 struct SearchResultRow: View {
-    var asset: SearchResult
+    var result: SearchResult
     
-    var assetType: Asset.TypeEnum {
-        Asset.TypeEnum.from(raw: asset.type)
+    var resultType: Asset.TypeEnum {
+        Asset.TypeEnum.from(raw: result.type)
     }
 
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text(asset.name)
-                Text(asset.symbol.uppercased())
+                Text(result.name)
+                Text(result.symbol.uppercased())
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
             Spacer()
             VStack(alignment: .center) {
-                Image(systemName: assetType.systemImage)
-                Text(assetType.displayName)
+                Image(systemName: resultType.systemImage)
+                Text(resultType.displayName)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -35,5 +35,5 @@ struct SearchResultRow: View {
 }
 
 #Preview {
-    SearchResultRow(asset: SearchResult(name: "Test Asset Name", symbol: "TEST", type: "stock"))
+    SearchResultRow(result: SearchResult(name: "Test Asset Name", symbol: "TEST", type: "stock"))
 }

@@ -11,16 +11,57 @@ import SwiftUI
 
 @Model
 class Asset {
-    var name: String = "undefined" // Mandatory
-    var type: TypeEnum = TypeEnum.other // Mandatory
-    var price: Double = 0.0 // Mandatory
-    var symbol: String = "undefined" // Mandatory
-    var units: Double = 0.0
-    var updatedAt: Date = Date.now
-    var createdAt: Date = Date.now
+    private(set) var name: String = "undefined" // Mandatory
+    private(set) var type: TypeEnum = TypeEnum.other // Mandatory
+    private(set) var price: Double = 0.0 // Mandatory
+    private(set) var symbol: String = "undefined" // Mandatory
+    private(set) var units: Double = 0.0
+    private(set) var updatedAt: Date = Date.now
+    private(set) var createdAt: Date = Date.now
     var image: String = ""
     var notes: String = ""
-    var remoteManaged = false
+    private(set) var remoteManaged = false
+    
+    // These fields can only be edited if asset isn't remotely managed
+    var nameBinding: Binding<String> {
+        Binding(
+            get: { self.name },
+            set: { (self.remoteManaged == false ? (self.name = $0) : (self.name = self.name)) }
+        )
+    }
+    var typeBinding: Binding<TypeEnum> {
+        Binding(
+            get: { self.type },
+            set: { (self.remoteManaged == false ? (self.type = $0) : (self.type = self.type)) }
+        )
+    }
+    var priceBinding: Binding<Double> {
+        Binding(
+            get: { self.price },
+            set: { (self.remoteManaged == false ? (self.price = max(0, $0)) : (self.price = self.price)) }
+        )
+    }
+    var symbolBinding: Binding<String> {
+        Binding(
+            get: { self.symbol },
+            set: { (self.remoteManaged == false ? (self.symbol = $0.uppercased()) : (self.symbol = self.symbol)) }
+        )
+    }
+    var unitsBinding: Binding<Double> {
+        Binding(
+            get: { self.units },
+            set: {
+                switch self.type {
+                case .crypto, .metal, .cash, .other:
+                    self.units = max(0, $0)
+                    break
+                case .stock, .etf, .bond:
+                    self.units = round(max(0, $0))
+                    break
+                }
+            }
+        )
+    }
     
     var value: Double {
         return price * units
@@ -64,10 +105,28 @@ class Asset {
         self.image = remoteAsset.image ?? ""
     }
     
+    init(searchResult: SearchResult) {
+        self.name = searchResult.name
+        self.type = TypeEnum.from(raw: searchResult.type)
+        self.symbol = searchResult.symbol
+        self.remoteManaged = true
+    }
+    
     func updateFromRemote(remoteAsset: AssetDTO) {
         self.price = remoteAsset.price
         self.updatedAt = Date.now
         self.image = remoteAsset.image ?? ""
+    }
+    
+    func addUnits(_ units: Double) {
+        switch self.type {
+        case .crypto, .metal, .cash, .other:
+            self.units += max(0, units)
+            break
+        case .stock, .etf, .bond:
+            self.units += round(max(0, units))
+            break
+        }
     }
     
     static func empty(type: TypeEnum = TypeEnum.other) -> Asset {

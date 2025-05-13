@@ -14,36 +14,33 @@ struct ContentView: View {
     
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                if portfolios.isEmpty {
-                    Button("Add Portfolio") {
-                        let newPortfolio = Portfolio(name: "First Portfolio")
-                        modelContext.insert(newPortfolio)
-                    }
-                } else {
-                    TabView {
-                        SummaryView(portfolio: portfolios[0])
-                            .tabItem {
-                                Label("Summary", systemImage: "chart.pie")
-                            }
-                        AssetList(portfolio: portfolios[0])
-                            .tabItem {
-                                Label("Assets", systemImage: "folder")
-                            }
-                        SearchView()
-                            .tabItem {
-                                Label("Search", systemImage: "magnifyingglass")
-                            }
-                        SettingsView()
-                            .tabItem {
-                                Label("Settings", systemImage: "gearshape")
-                            }
-                    }
-                    
+        VStack {
+            if portfolios.isEmpty {
+                Button("Add Portfolio") {
+                    let newPortfolio = Portfolio(name: "First Portfolio")
+                    modelContext.insert(newPortfolio)
                 }
+            } else {
+                TabView {
+                    SummaryView(portfolio: portfolios[0])
+                        .tabItem {
+                            Label("Summary", systemImage: "chart.pie")
+                        }
+                    AssetListView(portfolio: portfolios[0])
+                        .tabItem {
+                            Label("Assets", systemImage: "folder")
+                        }
+                    SearchView(portfolio: portfolios[0])
+                        .tabItem {
+                            Label("Search", systemImage: "magnifyingglass")
+                        }
+                    SettingsView()
+                        .tabItem {
+                            Label("Settings", systemImage: "gearshape")
+                        }
+                }
+                
             }
-            .navigationTitle("Crate Ledger")
         }
     }
 

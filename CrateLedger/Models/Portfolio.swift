@@ -12,7 +12,7 @@ import SwiftData
 class Portfolio {
     var name: String = "undefined"
     
-    @Relationship(deleteRule: .cascade) var assets: [Asset] = [Asset]()
+    @Relationship(deleteRule: .cascade) private(set) var assets: [Asset] = [Asset]()
     
     var value: Double {
         assets.reduce(0) { $0 + $1.value }
@@ -33,8 +33,12 @@ class Portfolio {
     }
     
     func insert(asset: Asset) {
-        if asset.hasRequiredFields && !includes(asset: asset) {
-            assets.append(asset)
+        if asset.hasRequiredFields {
+            if (!includes(asset: asset)) {
+                assets.append(asset)
+            } else {
+                assets.first(where: { $0.key == asset.key })?.addUnits(asset.units)
+            }
         }
     }
     

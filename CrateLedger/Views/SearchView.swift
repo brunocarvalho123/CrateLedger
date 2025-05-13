@@ -11,13 +11,15 @@ import Combine
 struct SearchView: View {
     @Environment(\.dismiss) var dismiss
     
+    @Bindable var portfolio: Portfolio
+    
     let type: Asset.TypeEnum? = nil
     
     @State private var query = ""
     @State private var results: [SearchResult] = []
     @State private var isLoading = false
-    @State private var showCustomAsset = false
     @State private var debouncing = false
+    @State private var selectedAsset: Asset?
     @FocusState private var isSearchFieldFocused: Bool
 
     private let debounceDelay: TimeInterval = 0.4
@@ -37,20 +39,23 @@ struct SearchView: View {
                 ProgressView()
                     .padding()
             } else if results.isEmpty && query.count >= 3 && debouncing == false {
-                NoSearchResults(query: query, type: type)
+                NoSearchResults(portfolio: portfolio, query: query, type: type)
             } else if results.isEmpty && query.count < 3 && debouncing == false {
                 NoSearchQuery()
             } else {
-                List(results) { asset in
+                List(results) { result in
                     Button {
-                        add(asset)
+                        add(result)
                     } label: {
-                        SearchResultRow(asset: asset)
+                        SearchResultRow(result: result)
                     }
                     .buttonStyle(.plain)
                 }
             }
             Spacer()
+        }
+        .sheet(item: $selectedAsset) { asset in
+            AssetView(portfolio: portfolio, asset: asset)
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -87,13 +92,12 @@ struct SearchView: View {
         isLoading = false
     }
 
-    func add(_ remote: SearchResult) {
-        // Handle adding the remote asset to portfolio
-        // Or navigate to a detail view for confirmation/edit
+    func add(_ searchResult: SearchResult) {
+        selectedAsset = Asset(searchResult: searchResult)
     }
 }
 
 
 #Preview {
-    SearchView()
+    SearchView(portfolio: Portfolio.example())
 }

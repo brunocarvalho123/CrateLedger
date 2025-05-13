@@ -37,28 +37,22 @@ struct AssetView: View {
             Form {
                 Text("Asset type: \(asset.type.displayName)")
                 Section("Asset info") {
-                    TextField("Name", text: $asset.name)
-                    TextField("Symbol", text: $asset.symbol)
-                    TextField("Price", value: $asset.price, format: .currency(code: "USD"))
+                    TextField("Name", text: asset.nameBinding)
+                    TextField("Symbol", text: asset.symbolBinding)
+                    TextField("Price", value: asset.priceBinding, format: .currency(code: "USD"))
                 }
                 .disabled(asset.remoteManaged)
                 Section("Amount") {
-                    TextField("Amount held", value: $asset.units, format: .number)
+                    TextField("Amount held", value: asset.unitsBinding, format: .number)
                 }
                 Section("Notes") {
                     TextEditor(text: $asset.notes)
                 }
                 
                 Section(asset.remoteManaged ? "Updated at: \(asset.lastUpdate)" : "") {
-                    Toggle("Remote managed", isOn: $asset.remoteManaged)
-                        .onChange(of: asset.remoteManaged) {
-                            if asset.remoteManaged {
-                                Task {
-                                    await viewModel.remoteFetch(asset: asset)
-                                }
-                            }
-                        }
-                        .disabled(asset.symbol.isEmpty)
+//                    Task {
+//                        await viewModel.remoteFetch(asset: asset)
+//                    }
                     Button("OK") {
                         viewModel.save(portfolio: portfolio, asset: asset)
                         dismiss()
