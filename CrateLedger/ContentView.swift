@@ -26,7 +26,7 @@ struct ContentView: View {
                         .tabItem {
                             Label("Summary", systemImage: "chart.pie")
                         }
-                    AssetListView(portfolio: portfolios[0])
+                    AllAssetsView(portfolio: portfolios[0])
                         .tabItem {
                             Label("Assets", systemImage: "folder")
                         }

@@ -34,19 +34,29 @@ struct AssetView: View {
                 }
                 .frame(height: 100)
             }
-            Form {
+            Form {                
                 Text("Asset type: \(asset.type.displayName)")
-                Section("Asset info") {
+                .disabled(asset.remoteManaged)
+                Section("Name") {
                     TextField("Name", text: asset.nameBinding)
+                }
+                .disabled(asset.remoteManaged)
+                Section("Symbol") {
                     TextField("Symbol", text: asset.symbolBinding)
+                }
+                .disabled(asset.remoteManaged)
+                Section("Price") {
                     TextField("Price", value: asset.priceBinding, format: .currency(code: "USD"))
                 }
                 .disabled(asset.remoteManaged)
-                Section("Amount") {
-                    TextField("Amount held", value: asset.unitsBinding, format: .number)
+                Section("Quantity") {
+                    TextField("Quantity held", value: asset.unitsBinding, format: .number)
                 }
                 Section("Notes") {
                     TextEditor(text: $asset.notes)
+                }
+                if asset.remoteManaged == false {
+                    Text("Custom Asset")
                 }
                 
                 Section(asset.remoteManaged ? "Updated at: \(asset.lastUpdate)" : "") {

@@ -36,13 +36,13 @@ class Portfolio {
             if (!includes(asset: asset)) {
                 assets.append(asset)
             } else {
-                assets.first(where: { $0.key == asset.key })?.addUnits(asset.units)
+                assets.first(where: { ($0.key == asset.key) && ($0.remoteManaged == asset.remoteManaged) })?.addUnits(asset.units)
             }
         }
     }
     
     func includes(asset: Asset) -> Bool {
-        assets.contains(where: { $0.key == asset.key })
+        assets.contains(where: { ($0.key == asset.key) && ($0.remoteManaged == asset.remoteManaged) })
     }
     
     func valueIn(type: Asset.TypeEnum) -> Double {

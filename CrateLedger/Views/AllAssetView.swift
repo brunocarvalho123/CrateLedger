@@ -1,5 +1,5 @@
 //
-//  AssetListView.swift
+//  AllAssetsView.swift
 //  CrateLedger
 //
 //  Created by Bruno Carvalho on 13/05/2025.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AssetListView: View {
+struct AllAssetsView: View {
     @Bindable var portfolio: Portfolio
     
     var body: some View {
@@ -18,5 +18,5 @@ struct AssetListView: View {
 }
 
 #Preview {
-    AssetListView(portfolio: Portfolio.example())
+    AllAssetsView(portfolio: Portfolio.example())
 }
