@@ -11,34 +11,16 @@ import SwiftData
 struct AssetList: View {
     @Environment(\.modelContext) var modelContext
     @Bindable var portfolio: Portfolio
-    var types: [Asset.TypeEnum]?
     
-    @State private var showingAssetOptions = false
-    @State private var showingAddScreen = false
-    @State private var selectedType: Asset.TypeEnum? = nil
-    
-    @State private var searchText = ""
-    
-    var assets: [Asset] {
-        var tmpAssets: [Asset]
-        if let types {
-            tmpAssets = portfolio.assets(types: types)
-        } else {
-            tmpAssets = portfolio.assets
-        }
-        if !searchText.isEmpty {
-            tmpAssets = tmpAssets.filter { $0.name.localizedCaseInsensitiveContains(searchText) || $0.symbol.localizedCaseInsensitiveContains(searchText)
-            }
-        }
-        return tmpAssets
+    init(portfolio: Portfolio, types: [Asset.TypeEnum] = []) {
+        self.portfolio = portfolio
+        viewModel.types = types
     }
-    
-    var assetListTitle: String {
-        types?.count == 1 ? types!.first!.displayName : "Assets"
-    }
+
+    @State private var viewModel = ViewModel()
     
     var body: some View {
-        let filteredAssets: [Asset] = assets
+        let filteredAssets: [Asset] = viewModel.filterAssets(portfolio: portfolio)
 
         VStack {
             List {
@@ -46,7 +28,7 @@ struct AssetList: View {
                     ContentUnavailableView {
                         Label("Asset not found", systemImage: "magnifyingglass")
                     } description: {
-                        Text("You don't have any assets that match \"\(searchText)\"")
+                        Text("You don't have any assets that match \"\(viewModel.searchText)\"")
                     }
                     .padding()
                 } else {
@@ -58,30 +40,20 @@ struct AssetList: View {
                     .onDelete(perform: deleteAsset)
                 }
             }
-            .searchable(text: $searchText, prompt: "Search assets")
+            .searchable(text: $viewModel.searchText, prompt: "Search assets")
         }
-        .navigationTitle(assetListTitle)
+        .navigationTitle(viewModel.assetListTitle)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Add asset", systemImage: "plus") {
-                    if types?.count == 1 {
-                        selectedType = types?.first
-                        showingAddScreen = true
-                        return
-                    }
-                    showingAssetOptions = true
-                }
+                Button("Add asset", systemImage: "plus", action: viewModel.showAddAsset)
             }
         }
-        .sheet(isPresented: $showingAddScreen) {
-            AssetView(portfolio: portfolio, asset: Asset.empty(type: selectedType ?? .crypto))
+        .sheet(isPresented: $viewModel.showingAddScreen) {
+            SearchView(portfolio: portfolio, type: viewModel.selectedType)
         }
-        .confirmationDialog("Choose asset type", isPresented: $showingAssetOptions, titleVisibility: .visible) {
-            ForEach(types ?? Asset.TypeEnum.allCases) { type in
-                Button(type.displayName) {
-                    selectedType = type
-                    showingAddScreen = true
-                }
+        .confirmationDialog("Choose asset type", isPresented: $viewModel.showingAssetOptions, titleVisibility: .visible) {
+            ForEach(viewModel.types.count > 0 ? viewModel.types : Asset.TypeEnum.allCases) { type in
+                Button(type.displayName) { viewModel.showAddAsset(type: type) }
             }
         }
     }

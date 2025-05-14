@@ -13,7 +13,7 @@ struct SearchView: View {
     
     @Bindable var portfolio: Portfolio
     
-    let type: Asset.TypeEnum? = nil
+    let type: Asset.TypeEnum?
     
     @State private var query = ""
     @State private var results: [SearchResult] = []
@@ -99,5 +99,5 @@ struct SearchView: View {
 
 
 #Preview {
-    SearchView(portfolio: Portfolio.example())
+    SearchView(portfolio: Portfolio.example(), type: nil)
 }

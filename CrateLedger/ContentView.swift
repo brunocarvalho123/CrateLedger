@@ -30,7 +30,7 @@ struct ContentView: View {
                         .tabItem {
                             Label("Assets", systemImage: "folder")
                         }
-                    SearchView(portfolio: portfolios[0])
+                    SearchView(portfolio: portfolios[0], type: nil)
                         .tabItem {
                             Label("Search", systemImage: "magnifyingglass")
                         }
