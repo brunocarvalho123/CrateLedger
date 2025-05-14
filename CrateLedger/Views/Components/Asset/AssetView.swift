@@ -19,51 +19,77 @@ struct AssetView: View {
 
     var body: some View {
         VStack {
-            if asset.hasImage {
-                AsyncImage(url: URL(string: asset.image)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    } else if phase.error != nil {
-                        // Error
-                    } else {
-                        // Placeholder
-                        ProgressView()
+            Form {
+                Section {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(asset.remoteManaged ? "Not Custom Asset" : "Custom Asset")
+                                .font(.subheadline)
+                                .foregroundStyle(asset.remoteManaged ? Color.secondary : Color.green)
+                        }
+                        Spacer()
+                        if asset.hasImage {
+                            AsyncImage(url: URL(string: asset.image)) { phase in
+                                if let image = phase.image {
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 40, height: 40)
+                                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                                } else if phase.error != nil {
+                                    // Error
+                                } else {
+                                    // Placeholder
+                                    ProgressView()
+                                }
+                            }
+                            .frame(width: 40, height: 40)
+                        }
                     }
                 }
-                .frame(height: 100)
-            }
-            Form {                
-                Text("Asset type: \(asset.type.displayName)")
-                .disabled(asset.remoteManaged)
-                Section("Name") {
-                    TextField("Name", text: asset.nameBinding)
+
+                Section(header: Text("Details")) {
+                    Picker("Asset Type", selection: asset.typeBinding) {
+                        ForEach(Asset.TypeEnum.allCases, id: \.self) { type in
+                            Text(type.displayName).tag(type)
+                        }
+                    }
+                    .disabled(asset.remoteManaged)
+
+                    VStack(alignment: .leading) {
+                        Text("Name")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        TextField("e.g. Bitcoin", text: asset.nameBinding)
+                            .disabled(asset.remoteManaged)
+                    }
+
+                    VStack(alignment: .leading) {
+                        Text("Symbol")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        TextField("e.g. BTC", text: asset.symbolBinding)
+                            .disabled(asset.remoteManaged)
+                    }
+
+                    VStack(alignment: .leading) {
+                        Text("Price (USD)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        TextField("e.g. 30000", value: asset.priceBinding, format: .currency(code: "USD"))
+                            .keyboardType(.decimalPad)
+                            .disabled(asset.remoteManaged)
+                    }
                 }
-                .disabled(asset.remoteManaged)
-                Section("Symbol") {
-                    TextField("Symbol", text: asset.symbolBinding)
+
+                Section(header: Text("Holdings")) {
+                    TextField("Quantity", value: asset.unitsBinding, format: .number)
+                        .keyboardType(.decimalPad)
                 }
-                .disabled(asset.remoteManaged)
-                Section("Price") {
-                    TextField("Price", value: asset.priceBinding, format: .currency(code: "USD"))
-                }
-                .disabled(asset.remoteManaged)
-                Section("Quantity") {
-                    TextField("Quantity held", value: asset.unitsBinding, format: .number)
-                }
-                Section("Notes") {
+
+                Section(header: Text("Notes")) {
                     TextEditor(text: $asset.notes)
-                }
-                if asset.remoteManaged == false {
-                    Text("Custom Asset")
-                }
-                
-                Section(asset.remoteManaged ? "Updated at: \(asset.lastUpdate)" : "") {
-                    Button("OK") {
-                        viewModel.save(portfolio: portfolio, asset: asset)
-                        dismiss()
-                    }
+                        .frame(minHeight: 120)
                 }
             }
         }
