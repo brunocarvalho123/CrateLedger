@@ -41,7 +41,7 @@ struct SearchView: View {
             } else if results.isEmpty && query.count >= 3 && debouncing == false {
                 NoSearchResults(portfolio: portfolio, query: query, type: type)
             } else if results.isEmpty && query.count < 3 && debouncing == false {
-                NoSearchQuery()
+                NoSearchQuery(type: type)
             } else {
                 List(results) { result in
                     Button {

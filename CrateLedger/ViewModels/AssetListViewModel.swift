@@ -11,7 +11,6 @@ extension AssetList {
     @Observable
     class ViewModel {
         var types: [Asset.TypeEnum] = []
-        var showingAssetOptions = false
         var showingAddScreen = false
         var selectedType: Asset.TypeEnum? = nil
         
@@ -34,10 +33,10 @@ extension AssetList {
         func showAddAsset() {
             if types.count == 1 {
                 selectedType = types.first
-                showingAddScreen = true
-                return
+            } else {
+                selectedType = nil
             }
-            showingAssetOptions = true
+            showingAddScreen = true
         }
         
         func showAddAsset(type: Asset.TypeEnum) {
@@ -46,7 +45,7 @@ extension AssetList {
         }
         
         var assetListTitle: String {
-            types.count == 1 ? types.first!.displayName : "Assets"
+            types.count == 1 ? types.first!.displayName : "All Assets"
         }
         
     }

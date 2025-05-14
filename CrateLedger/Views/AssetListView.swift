@@ -13,7 +13,6 @@ struct AssetListView: View {
     var body: some View {
         NavigationStack {
             AssetList(portfolio: portfolio)
-                .navigationTitle("Assets")
         }
     }
 }

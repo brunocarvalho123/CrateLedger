@@ -51,11 +51,6 @@ struct AssetList: View {
         .sheet(isPresented: $viewModel.showingAddScreen) {
             SearchView(portfolio: portfolio, type: viewModel.selectedType)
         }
-        .confirmationDialog("Choose asset type", isPresented: $viewModel.showingAssetOptions, titleVisibility: .visible) {
-            ForEach(viewModel.types.count > 0 ? viewModel.types : Asset.TypeEnum.allCases) { type in
-                Button(type.displayName) { viewModel.showAddAsset(type: type) }
-            }
-        }
     }
 
     func deleteAsset(at offsets: IndexSet) {

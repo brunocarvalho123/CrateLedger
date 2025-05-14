@@ -8,11 +8,32 @@
 import SwiftUI
 
 struct NoSearchQuery: View {
+    var type: Asset.TypeEnum?
+    
     var body: some View {
         ContentUnavailableView {
-            Label("Search assets", systemImage: "magnifyingglass")
+            switch type {
+            case .crypto:
+                Label("Add cryto", systemImage: type?.systemImage ?? "plus.circle")
+            case .stock:
+                Label("Add stock", systemImage: type?.systemImage ?? "plus.circle")
+            case .etf:
+                Label("Add ETF", systemImage: type?.systemImage ?? "plus.circle")
+            case .metal:
+                Label("Add precious metal", systemImage: type?.systemImage ?? "plus.circle")
+            case .cash:
+                Label("Add cash", systemImage: type?.systemImage ?? "plus.circle")
+            default:
+                Label("Add assets", systemImage: "plus.circle")
+            }
         } description: {
-            Text("Type in an asset symbol or name to start searching!")
+            switch type {
+            case .crypto,.stock,.etf,.metal,.cash,nil:
+                Text("Type in an asset symbol or name to start searching!")
+            default:
+                Text("Type in the asset name to create it")
+            }
+            
         }
         .padding()
     }

@@ -30,9 +30,9 @@ struct ContentView: View {
                         .tabItem {
                             Label("Assets", systemImage: "folder")
                         }
-                    SearchView(portfolio: portfolios[0], type: nil)
+                    PerformanceView()
                         .tabItem {
-                            Label("Search", systemImage: "magnifyingglass")
+                            Label("Performance", systemImage: "chart.line.uptrend.xyaxis")
                         }
                     SettingsView()
                         .tabItem {
