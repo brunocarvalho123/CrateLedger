@@ -29,25 +29,7 @@ struct AssetView: View {
             Form {
                 Section {
                     HStack {
-                        if asset.hasImage {
-                            AsyncImage(url: URL(string: asset.image)) { phase in
-                                if let image = phase.image {
-                                    image
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 40, height: 40)
-                                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                                } else if phase.error != nil {
-                                    // Error
-                                } else {
-                                    // Placeholder
-                                    ProgressView()
-                                }
-                            }
-                            .frame(width: 40, height: 40)
-                        } else {
-                            Text("no image")
-                        }
+                        AssetImage(asset: asset)
 
                         Spacer()
 
