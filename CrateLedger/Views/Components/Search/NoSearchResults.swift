@@ -29,7 +29,7 @@ struct NoSearchResults: View {
             }
         }
         .sheet(item: $customAsset) { asset in
-            AssetView(portfolio: portfolio, asset: asset)
+            AssetView(portfolio: portfolio, asset: asset, fromSearch: true)
         }
         .padding()
     }

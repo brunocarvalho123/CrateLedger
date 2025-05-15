@@ -36,7 +36,12 @@ class Portfolio {
             if (!includes(asset: asset)) {
                 assets.append(asset)
             } else {
-                assets.first(where: { ($0.key == asset.key) && ($0.remoteManaged == asset.remoteManaged) })?.addUnits(asset.units)
+                if let assetOcurrence = assets.first(where: { ($0.key == asset.key) && ($0.remoteManaged == asset.remoteManaged) }) {
+                    if (asset != assetOcurrence) {
+                        assetOcurrence.addUnits(asset.units)
+                    }
+                }
+                
             }
         }
     }

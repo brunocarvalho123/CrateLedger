@@ -55,7 +55,7 @@ struct SearchView: View {
             Spacer()
         }
         .sheet(item: $selectedAsset) { asset in
-            AssetView(portfolio: portfolio, asset: asset)
+            AssetView(portfolio: portfolio, asset: asset, fromSearch: true)
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

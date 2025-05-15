@@ -14,20 +14,21 @@ struct AssetView: View {
 
     @Bindable var portfolio: Portfolio
     @Bindable var asset: Asset
-    
+    var fromSearch: Bool
+
     @State private var viewModel = ViewModel()
+    
+    init(portfolio: Portfolio, asset: Asset, fromSearch: Bool = false) {
+        self.portfolio = portfolio
+        self.asset = asset
+        self.fromSearch = fromSearch
+    }
 
     var body: some View {
         VStack {
             Form {
                 Section {
                     HStack {
-                        VStack(alignment: .leading) {
-                            Text(asset.remoteManaged ? "Not Custom Asset" : "Custom Asset")
-                                .font(.subheadline)
-                                .foregroundStyle(asset.remoteManaged ? Color.secondary : Color.green)
-                        }
-                        Spacer()
                         if asset.hasImage {
                             AsyncImage(url: URL(string: asset.image)) { phase in
                                 if let image = phase.image {
@@ -44,12 +45,28 @@ struct AssetView: View {
                                 }
                             }
                             .frame(width: 40, height: 40)
+                        } else {
+                            Text("no image")
                         }
+
+                        Spacer()
+
+                        Label {
+                            Text(asset.remoteManaged ? "Up to date" : "Custom")
+                        } icon: {
+                            Image(systemName: asset.remoteManaged ? "arrow.triangle.2.circlepath" : "pencil")
+                        }
+                        .font(.caption)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(asset.remoteManaged ? Color.green.opacity(0.15) : Color.gray.opacity(0.2))
+                        .foregroundStyle(asset.remoteManaged ? Color.green : Color.secondary)
+                        .clipShape(Capsule())
                     }
                 }
 
                 Section(header: Text("Details")) {
-                    Picker("Asset Type", selection: asset.typeBinding) {
+                    Picker(selection: asset.typeBinding, label: Text("Category")) {
                         ForEach(Asset.TypeEnum.allCases, id: \.self) { type in
                             Text(type.displayName).tag(type)
                         }
@@ -89,7 +106,20 @@ struct AssetView: View {
 
                 Section(header: Text("Notes")) {
                     TextEditor(text: $asset.notes)
-                        .frame(minHeight: 120)
+                }
+                
+                Section {
+                    Button() {
+                        viewModel.save(portfolio: portfolio, asset: asset)
+                        dismiss()
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("Save")
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                    }
                 }
             }
         }
@@ -110,7 +140,7 @@ struct AssetView: View {
             }
         }
         .onAppear {
-            if asset.remoteManaged && (asset.isStale || !portfolio.includes(asset: asset))  {
+            if asset.remoteManaged && (asset.isStale || fromSearch)  {
                 Task {
                     await viewModel.remoteFetch(asset: asset)
                 }

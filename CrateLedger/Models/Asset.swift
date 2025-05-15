@@ -77,6 +77,18 @@ class Asset {
         return self.image != ""
     }
     
+    var imageURL: URL? {
+        if self.image.starts(with: "http") {
+            return URL(string: self.image)
+        } else {
+            return URL(fileURLWithPath: self.image)
+        }
+    }
+
+    var isRemoteImage: Bool {
+        return self.image.starts(with: "http")
+    }
+    
     var hasRequiredFields: Bool {
         return self.name != "" && self.symbol != ""
     }
