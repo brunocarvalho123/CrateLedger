@@ -10,6 +10,7 @@ import SwiftData
 
 @Model
 class Portfolio {
+    @Attribute(.unique) var id: UUID = UUID()
     var name: String = "undefined"
     
     @Relationship(deleteRule: .cascade) private(set) var assets: [Asset] = [Asset]()

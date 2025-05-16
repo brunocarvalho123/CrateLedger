@@ -10,9 +10,18 @@ import SwiftUI
 struct AllAssetsView: View {
     @Bindable var portfolio: Portfolio
     
+    @State var showingAddScreen = false
+    
     var body: some View {
         NavigationStack {
-            AssetList(portfolio: portfolio)
+            if portfolio.hasAssets {
+                AssetList(portfolio: portfolio)
+            } else {
+                NoAssetsFound(showingAddScreen: $showingAddScreen)
+                .sheet(isPresented: $showingAddScreen) {
+                    SearchView(portfolio: portfolio, type: nil)
+                }
+            }
         }
     }
 }

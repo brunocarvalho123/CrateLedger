@@ -20,17 +20,7 @@ struct SummaryView: View {
                     SummaryChart(portfolio: portfolio)
                     SummaryTypeList(portfolio: portfolio)
                 } else {
-                    ContentUnavailableView {
-                        Label("No Assets", systemImage: "magnifyingglass")
-                    } description: {
-                        Text("You don't have any saved assets in this portfolio.")
-                    } actions: {
-                        Button("Create an asset") {
-                            viewModel.showingAddScreen = true
-                        }
-                        .buttonStyle(.borderedProminent)
-                    }
-                    .padding()
+                    NoAssetsFound(showingAddScreen: $viewModel.showingAddScreen)
                 }
             }
             .navigationTitle($portfolio.name)

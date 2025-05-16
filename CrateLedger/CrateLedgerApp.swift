@@ -10,9 +10,12 @@ import SwiftData
 
 @main
 struct CrateLedgerApp: App {
+    @State private var portfolioManager = PortfolioManager()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(portfolioManager)
         }
         .modelContainer(for: Portfolio.self)
     }
