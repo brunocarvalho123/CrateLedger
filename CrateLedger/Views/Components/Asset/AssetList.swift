@@ -18,7 +18,7 @@ struct AssetList: View {
     }
 
     @State private var viewModel = ViewModel()
-    
+
     var body: some View {
         let filteredAssets: [Asset] = viewModel.filterAssets(portfolio: portfolio)
 
@@ -44,6 +44,18 @@ struct AssetList: View {
         }
         .navigationTitle(viewModel.assetListTitle)
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Picker("Sort by", selection: $viewModel.sortOption) {
+                        ForEach(ViewModel.SortOption.allCases, id: \.self) { option in
+                            Text(option.rawValue).tag(option)
+                        }
+                    }
+                } label: {
+                    Label("Sort", systemImage: "arrow.up.arrow.down")
+                }
+            }
+            
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Add asset", systemImage: "plus", action: viewModel.showAddAsset)
             }

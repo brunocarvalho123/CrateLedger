@@ -16,6 +16,14 @@ extension AssetList {
         
         var searchText = ""
         
+        enum SortOption: String, CaseIterable {
+            case name = "Name"
+            case value = "Value"
+            case type = "Type"
+            case created_at = "Created date"
+        }
+        var sortOption: SortOption = .value
+        
         func filterAssets(portfolio: Portfolio) -> [Asset] {
             var tmpAssets: [Asset]
             if types.count > 0 {
@@ -27,8 +35,21 @@ extension AssetList {
                 tmpAssets = tmpAssets.filter { $0.name.localizedCaseInsensitiveContains(searchText) || $0.symbol.localizedCaseInsensitiveContains(searchText)
                 }
             }
-            return tmpAssets
+            return sortAssets(tmpAssets)
         }
+        
+        private func sortAssets(_ assets: [Asset]) -> [Asset] {
+           switch sortOption {
+           case .name:
+               return assets.sorted { $0.name < $1.name }
+           case .value:
+               return assets.sorted { $0.value > $1.value }
+           case .type:
+               return assets.sorted { $0.type.rawValue < $1.type.rawValue }
+           case .created_at:
+               return assets.sorted { $0.createdAt < $1.createdAt }
+           }
+       }
         
         func showAddAsset() {
             if types.count == 1 {
