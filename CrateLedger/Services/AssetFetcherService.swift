@@ -10,7 +10,7 @@ import Foundation
 class AssetFetcherService {
     static let shared = AssetFetcherService()
     
-    private let baseURL = URL(string: "http://localhost:3000")!
+    private let baseURL = URL(string: "http://Bruno-MBA.local:3000")!
     
     private init() { }
     

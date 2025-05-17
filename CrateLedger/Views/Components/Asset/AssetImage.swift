@@ -11,11 +11,13 @@ import PhotosUI
 struct AssetImage: View {
     @Bindable var asset: Asset
     
+    var disablePicker = false
+    
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var isShowingPhotoPicker = false
     
-    let frameWidth: CGFloat = 120
-    let frameHeight: CGFloat = 70
+    let frameWidth: CGFloat = 50
+    let frameHeight: CGFloat = 50
     let shape = RoundedRectangle(cornerRadius: 8)
     
     var body: some View {
@@ -45,16 +47,26 @@ struct AssetImage: View {
                         .clipShape(shape)
                 } else {
                     // Fallback if file is missing
-                    VStack {
-                        Image(systemName: "photo.badge.plus")
-                            .font(.system(size: 28))
-                            .foregroundStyle(Color.blue)
+                    if disablePicker {
+                        Text(asset.symbol)
+                            .bold()
+                            .frame(width: frameWidth, height: frameHeight)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                            .foregroundStyle(Color.secondary)
+                    } else {
+                        VStack {
+                            Image(systemName: "photo.badge.plus")
+                                .font(.system(size: 28))
+                                .foregroundStyle(Color.blue)
+                        }
+                        .frame(width: frameWidth, height: frameHeight)
+                        .background(Color.gray.opacity(0.1))
+                        .clipShape(shape)
                     }
-                    .frame(width: frameWidth, height: frameHeight)
-                    .background(Color.gray.opacity(0.1))
-                    .clipShape(shape)
                 }
             }
+            .disabled(disablePicker)
             .onChange(of: selectedPhoto) {
                 Task {
                     guard let imageData = try await selectedPhoto?.loadTransferable(type: Data.self) else { return }

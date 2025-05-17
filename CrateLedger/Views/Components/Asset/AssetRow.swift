@@ -8,44 +8,12 @@
 import SwiftUI
 import SwiftData
 
-struct AssetSymbolLogo: View {
-    var asset: Asset
-    
-    var body: some View {
-        Text(asset.symbol)
-            .bold()
-            .frame(width: 48, height: 48)
-            .lineLimit(1)
-            .minimumScaleFactor(0.5)
-    }
-}
-
 struct AssetRow: View {
     var asset: Asset
 
     var body: some View {
         HStack {
-            VStack {
-                if asset.hasImage {
-                    AsyncImage(url: URL(string: asset.image)) { phase in
-                        if let image = phase.image {
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 48, height: 48)
-                        } else if phase.error != nil {
-                            // Error
-                            AssetSymbolLogo(asset: asset)
-                        } else {
-                            // Placeholder
-                            ProgressView()
-                                .frame(width: 48, height: 48)
-                        }
-                    }
-                } else {
-                    AssetSymbolLogo(asset: asset)
-                }
-            }
+            AssetImage(asset: asset, disablePicker: true)
             .padding(.trailing)
             VStack(alignment: .leading) {
                 Text(asset.name)
