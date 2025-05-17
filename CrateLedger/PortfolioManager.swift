@@ -13,15 +13,18 @@ class PortfolioManager {
     private let portfolioKey = "selectedPortfolio"
 
     private var portfolioId: String? {
-        get { UserDefaults.standard.string(forKey: portfolioKey) }
-        set { UserDefaults.standard.setValue(newValue, forKey: portfolioKey) }
+        get {
+            UserDefaults.standard.string(forKey: portfolioKey)
+        }
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: portfolioKey)
+        }
     }
 
     var selectedPortfolio: Portfolio? = nil
 
     func loadSelectedPortfolio(from context: ModelContext) {
-        guard let idString = portfolioId,
-              let uuid = UUID(uuidString: idString) else {
+        guard let idString = portfolioId, let uuid = UUID(uuidString: idString) else {
             selectedPortfolio = nil
             return
         }
@@ -34,8 +37,13 @@ class PortfolioManager {
             selectedPortfolio = nil
         }
     }
+    
+    func clearSelectedPortfolio() {
+        selectedPortfolio = nil
+        portfolioId = nil
+    }
 
-    func select(_ portfolio: Portfolio) {
+    func select(portfolio: Portfolio) {
         selectedPortfolio = portfolio
         portfolioId = portfolio.id.uuidString
     }

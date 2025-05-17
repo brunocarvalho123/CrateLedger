@@ -78,7 +78,7 @@ struct ContentView: View {
                         withAnimation {
                             let newPortfolio = Portfolio(name: "My Portfolio")
                             modelContext.insert(newPortfolio)
-                            portfolioManager.select(newPortfolio)
+                            portfolioManager.select(portfolio: newPortfolio)
                         }
                     } label: {
                         Label("Create Portfolio", systemImage: "plus")
@@ -93,6 +93,10 @@ struct ContentView: View {
         .task {
             if portfolioManager.selectedPortfolio == nil && !portfolios.isEmpty {
                 portfolioManager.loadSelectedPortfolio(from: modelContext)
+                // If it is still nill then just select the first one
+                if portfolioManager.selectedPortfolio == nil {
+                    portfolioManager.select(portfolio: portfolios[0])
+                }
             }
             isLoading = false
         }

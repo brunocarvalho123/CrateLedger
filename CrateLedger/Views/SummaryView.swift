@@ -23,7 +23,7 @@ struct SummaryView: View {
                     NoAssetsFound(showingAddScreen: $viewModel.showingAddScreen)
                 }
             }
-            .navigationTitle($portfolio.name)
+            .navigationTitle(portfolio.name)
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: Asset.TypeEnum.self) { type in
                 AssetList(portfolio: portfolio, types: [type])
@@ -34,6 +34,9 @@ struct SummaryView: View {
                 }
             }
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    PortfolioPicker()
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add asset", systemImage: "plus") {
                         viewModel.showingAddScreen = true
